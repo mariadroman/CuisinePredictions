@@ -105,14 +105,19 @@ public class CustomLineRecordReader extends RecordReader<LongWritable, Text> {
         //variable to store a line that starts with "{"
         Text tmp = new Text("");
 
-        // Consume the first line "["
-        newSize = in.readLine(value, maxLineLength,
-                Math.max((int) Math.min(
-                                Integer.MAX_VALUE, end - pos),
-                        maxLineLength));
+
 
         // Make sure we get at least one record that starts in this Split
         while (pos < end) {
+
+            // Consume the first line "["
+            if (pos == 0) {
+                newSize = in.readLine(value, maxLineLength,
+                        Math.max((int) Math.min(
+                                        Integer.MAX_VALUE, end - pos),
+                                maxLineLength));
+            }
+
             // Read first line and store its content to "value"
             newSize = in.readLine(value, maxLineLength,
                     Math.max((int) Math.min(
