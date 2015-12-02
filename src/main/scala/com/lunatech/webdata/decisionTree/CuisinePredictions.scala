@@ -50,8 +50,15 @@ object CuisinePredictions {
     }
 
     println("--------------------------------------------------")
-    labelAndPreds.takeSample(false, 100).foreach(r => println(
-      s"Actual: ${r._2} | Predicted: ${r._3}"))
+    val testErr = labelAndPreds.filter(r => r._2 != r._3).count.toDouble / testData.count()
+    println(f"Test Error = ${testErr * 100}%.2f")
+
+    val testMSE = labelAndPreds.map{ r => math.pow((r._2 - r._3), 2)}.mean()
+    println(s"Test Mean Squared Error = $testMSE")
+
+//    println("--------------------------------------------------")
+//    labelAndPreds.takeSample(false, 100).foreach(r => println(
+//      s"Actual: ${r._2} | Predicted: ${r._3}"))
 
     labelAndPreds.takeSample(false, 20).foreach{ r =>
       println("--------------------------------------------------")
