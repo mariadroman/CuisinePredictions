@@ -1,10 +1,10 @@
-package com.lunatech.webdata.decisionTree
+package com.lunatech.webdata
 
-import com.lunatech.webdata.{CustomLineInputFormat, ImportDataModel}
-import org.apache.hadoop.io.{Text, LongWritable}
+import org.apache.hadoop.io.{LongWritable, Text}
+import org.apache.spark.mllib.classification.{ClassificationModel, NaiveBayesModel, LogisticRegressionModel}
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.model.DecisionTreeModel
+import org.apache.spark.mllib.tree.model.{RandomForestModel, DecisionTreeModel}
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
@@ -16,22 +16,26 @@ object CuisinePredictions {
   def main(args: Array[String]) = {
 
     val conf = new SparkConf().setAppName("CuisinePredictions").
-      setMaster("local[*]")
+      setMaster("local[*]").
+      set("spark.driver.memory", "16g").
+      set("spark.executor.memory", "16g").
+      set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+
     val sc = new SparkContext(conf)
 
     val rawData: RDD[(LongWritable, Text)] =
       sc.newAPIHadoopFile[LongWritable, Text, CustomLineInputFormat](testDataPath)
     val testRecipes = ImportDataModel.rawDataToRecipes(rawData)
 
-    val cuisineToIndex = sc.objectFile[(String, Int)](Configuration().cuisinesPath).
+    val cuisineToIndex = sc.objectFile[(String, Int)](Configuration.cuisinesPath).
       collect.toMap
-    val ingredientToIndex = sc.objectFile[(String, Int)](Configuration().ingredientsPath).
+    val ingredientToIndex = sc.objectFile[(String, Int)](Configuration.ingredientsPath).
       collect.toMap
 
     val cuisinesNames = cuisineToIndex.map(r => r._2 -> r._1)
     val ingredientsNames = ingredientToIndex.map(r => r._2 -> r._1)
 
-    val data = MLUtils.loadLabeledPoints(sc, Configuration().dataPath)
+    val data = MLUtils.loadLabeledPoints(sc, Configuration.dataPath)
 
     val testData = testRecipes.map { r =>
       val label = cuisineToIndex(r.cuisine)
@@ -41,7 +45,22 @@ object CuisinePredictions {
       r.id -> LabeledPoint(label, vector)
     }
 
-    val model = DecisionTreeModel.load(sc, Configuration().trainingDataPath)
+    def loadClassModel(modelType: String): ClassificationModel = modelType match {
+      case "logisticRegression" => LogisticRegressionModel.load(sc, Configuration.logisticRegPath)
+      case "naiveBayes" => NaiveBayesModel.load(sc, Configuration.naiveBayesPath)
+    }
+
+    def loadTreeModel(modelType: String): DecisionTreeModel = modelType match {
+      case "dtEntropy" => DecisionTreeModel.load(sc, Configuration.dtEntropyPath)
+      case "dtGini" => DecisionTreeModel.load(sc, Configuration.dtGiniPath)
+    }
+
+    def loadForestModel(modelType: String): RandomForestModel = modelType match {
+      case "rfEntropy" => RandomForestModel.load(sc, Configuration.rfEntropyPath)
+      case "rfGini" => RandomForestModel.load(sc, Configuration.rfGiniPath)
+    }
+
+    val model = loadClassModel("logisticRegression")
 
     // Evaluate model on test instances and compute test error
     val labelAndPreds = testData.map { pk =>
@@ -49,16 +68,12 @@ object CuisinePredictions {
       (pk._1, pk._2.label, prediction, pk._2.features)
     }
 
-    println("--------------------------------------------------")
-    val testErr = labelAndPreds.filter(r => r._2 != r._3).count.toDouble / testData.count()
-    println(f"Test Error = ${testErr * 100}%.2f")
+    val error = labelAndPreds.filter(r => r._2 != r._3).count.toDouble / testData.count()
+
+    val accuracy = labelAndPreds.filter(r => r._2 == r._3).count.toDouble / testData.count()
 
     val testMSE = labelAndPreds.map{ r => math.pow((r._2 - r._3), 2)}.mean()
-    println(s"Test Mean Squared Error = $testMSE")
 
-//    println("--------------------------------------------------")
-//    labelAndPreds.takeSample(false, 100).foreach(r => println(
-//      s"Actual: ${r._2} | Predicted: ${r._3}"))
 
     labelAndPreds.takeSample(false, 20).foreach{ r =>
       println("--------------------------------------------------")
@@ -72,6 +87,10 @@ object CuisinePredictions {
       ingredientsIndices.foreach(i => println(s"  - ${ingredientsNames(i)}"))
 
     }
+    println("--------------------------------------------------")
+    println(f"Accuracy = ${accuracy * 100}%.2f%%")
+    println(f"Error    = ${error * 100}%.2f%%")
+    println(s"Test Mean Squared Error = $testMSE")
 
   }
 

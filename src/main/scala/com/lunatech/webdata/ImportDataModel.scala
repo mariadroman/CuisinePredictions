@@ -15,7 +15,10 @@ object ImportDataModel {
   def main(args: Array[String]) = {
 
     val conf = new SparkConf().setAppName("ImportDataModel").
-      setMaster("local[*]")
+      setMaster("local[*]").
+      set("spark.driver.memory", "16g").
+      set("spark.executor.memory", "16g").
+      set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     val sc = new SparkContext(conf)
 
     val rawData: RDD[(LongWritable, Text)] =
@@ -45,17 +48,17 @@ object ImportDataModel {
     }
 
     // Save all necessary files to be used in later steps
-    removeDir(Configuration().dataPath)
-    data.saveAsTextFile(Configuration().dataPath)
+    removeDir(Configuration.dataPath)
+    data.saveAsTextFile(Configuration.dataPath)
 
-    removeDir(Configuration().recipesPath)
-    recipes.saveAsObjectFile(Configuration().recipesPath)
+    removeDir(Configuration.recipesPath)
+    recipes.saveAsObjectFile(Configuration.recipesPath)
 
-    removeDir(Configuration().ingredientsPath)
-    sc.parallelize(ingredientToIndex.toSeq).saveAsObjectFile(Configuration().ingredientsPath)
+    removeDir(Configuration.ingredientsPath)
+    sc.parallelize(ingredientToIndex.toSeq).saveAsObjectFile(Configuration.ingredientsPath)
 
-    removeDir(Configuration().cuisinesPath)
-    sc.parallelize(cuisineToIndex.toSeq).saveAsObjectFile(Configuration().cuisinesPath)
+    removeDir(Configuration.cuisinesPath)
+    sc.parallelize(cuisineToIndex.toSeq).saveAsObjectFile(Configuration.cuisinesPath)
 
   }
 
