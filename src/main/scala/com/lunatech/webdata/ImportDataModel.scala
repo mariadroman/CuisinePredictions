@@ -10,7 +10,7 @@ import org.json4s.jackson.JsonMethods._
 
 object ImportDataModel {
 
-  val dataPath: String = "ML/train.json"
+  val dataPath: String = Configuration.inputTrainingData
 
   def main(args: Array[String]) = {
 
@@ -67,8 +67,8 @@ object ImportDataModel {
     rawData.map(x => parse(x._2.toString)).map(
       json => {
         val id = (json \ "id").extract[Int]
-        val cuisine = (json \ "cuisine").extract[String]
-        val ingredients = (json \ "ingredients").extract[List[String]]
+        val cuisine = (json \ "cuisine").extractOrElse[String]("unknown").toLowerCase
+        val ingredients = (json \ "ingredients").extractOrElse[List[String]](List()).map(_.toLowerCase)
         Recipe(id, cuisine, ingredients)
       }
     )

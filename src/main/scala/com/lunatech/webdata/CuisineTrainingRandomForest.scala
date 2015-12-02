@@ -49,6 +49,8 @@ object CuisineTrainingRandomForest {
     val model = RandomForest.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
 
+    evaluateModel("RandomForest with Gini", model, trainingData)
+
     removeDir(Configuration.rfGiniPath)
     model.save(sc, Configuration.rfGiniPath)
   }
@@ -62,6 +64,8 @@ object CuisineTrainingRandomForest {
     val model = RandomForest.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
 
+    evaluateModel("RandomForest with Entropy", model, trainingData)
+
     removeDir(Configuration.rfEntropyPath)
     model.save(sc, Configuration.rfEntropyPath)
   }
@@ -74,6 +78,8 @@ object CuisineTrainingRandomForest {
 
     val model = RandomForest.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
+
+    evaluateModel("RandomForest with Variance", model, trainingData)
 
     removeDir(Configuration.rfVariancePath)
     model.save(sc, Configuration.rfVariancePath)

@@ -8,8 +8,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object CuisineTrainingLogisticRegression {
 
-   val maxDepth = 30
-   val maxBins = 64
+   val maxDepth = 20
+   val maxBins = 32
 
    def main(args: Array[String]) = {
 
@@ -40,6 +40,8 @@ object CuisineTrainingLogisticRegression {
      val model = new LogisticRegressionWithLBFGS()
        .setNumClasses(numClasses)
        .run(trainingData)
+
+     evaluateModel("LogisticRegression", model, trainingData)
 
      removeDir(Configuration.logisticRegPath)
      model.save(sc, Configuration.logisticRegPath)

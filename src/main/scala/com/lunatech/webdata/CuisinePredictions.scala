@@ -11,7 +11,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object CuisinePredictions {
 
-  val testDataPath: String = "ML/train.json"
+  val dataPath: String = Configuration.inputTestingData
 
   def main(args: Array[String]) = {
 
@@ -24,7 +24,7 @@ object CuisinePredictions {
     val sc = new SparkContext(conf)
 
     val rawData: RDD[(LongWritable, Text)] =
-      sc.newAPIHadoopFile[LongWritable, Text, CustomLineInputFormat](testDataPath)
+      sc.newAPIHadoopFile[LongWritable, Text, CustomLineInputFormat](dataPath)
     val testRecipes = ImportDataModel.rawDataToRecipes(rawData)
 
     val cuisineToIndex = sc.objectFile[(String, Int)](Configuration.cuisinesPath).
@@ -35,15 +35,15 @@ object CuisinePredictions {
     val cuisinesNames = cuisineToIndex.map(r => r._2 -> r._1)
     val ingredientsNames = ingredientToIndex.map(r => r._2 -> r._1)
 
-    val data = MLUtils.loadLabeledPoints(sc, Configuration.dataPath)
-
     val testData = testRecipes.map { r =>
-      val label = cuisineToIndex(r.cuisine)
-      val values = r.ingredients.map(i => 1.0).toArray
-      val indices = r.ingredients.map(ingredientToIndex(_)).toArray
+      // Hmm... we have some new ingredients... should we ignore them? For now yes.
+      val filteredIngredients = r.ingredients.filter(ingredientToIndex.keySet.contains(_))
+      val values = filteredIngredients.map(i => 1.0).toArray
+      val indices = filteredIngredients.map(ingredientToIndex.getOrElse(_, 0)).toArray
       val vector = Vectors.sparse(ingredientToIndex.size, indices, values)
-      r.id -> LabeledPoint(label, vector)
+      (r.id, vector)
     }
+
 
     def loadClassModel(modelType: String): ClassificationModel = modelType match {
       case "logisticRegression" => LogisticRegressionModel.load(sc, Configuration.logisticRegPath)
@@ -51,46 +51,35 @@ object CuisinePredictions {
     }
 
     def loadTreeModel(modelType: String): DecisionTreeModel = modelType match {
-      case "dtEntropy" => DecisionTreeModel.load(sc, Configuration.dtEntropyPath)
-      case "dtGini" => DecisionTreeModel.load(sc, Configuration.dtGiniPath)
+      case "entropy" => DecisionTreeModel.load(sc, Configuration.dtEntropyPath)
+      case "gini" => DecisionTreeModel.load(sc, Configuration.dtGiniPath)
     }
 
     def loadForestModel(modelType: String): RandomForestModel = modelType match {
-      case "rfEntropy" => RandomForestModel.load(sc, Configuration.rfEntropyPath)
-      case "rfGini" => RandomForestModel.load(sc, Configuration.rfGiniPath)
+      case "entropy" => RandomForestModel.load(sc, Configuration.rfEntropyPath)
+      case "gini" => RandomForestModel.load(sc, Configuration.rfGiniPath)
     }
 
-    val model = loadClassModel("logisticRegression")
+    val model = loadTreeModel("gini")
 
     // Evaluate model on test instances and compute test error
-    val labelAndPreds = testData.map { pk =>
-      val prediction = model.predict(pk._2.features)
-      (pk._1, pk._2.label, prediction, pk._2.features)
+    val predictions = testData.map { pk =>
+      val prediction = model.predict(pk._2)
+      (pk._1,prediction, pk._2)
     }
 
-    val error = labelAndPreds.filter(r => r._2 != r._3).count.toDouble / testData.count()
-
-    val accuracy = labelAndPreds.filter(r => r._2 == r._3).count.toDouble / testData.count()
-
-    val testMSE = labelAndPreds.map{ r => math.pow((r._2 - r._3), 2)}.mean()
-
-
-    labelAndPreds.takeSample(false, 20).foreach{ r =>
+    predictions.takeSample(false, 20).foreach{ r =>
       println("--------------------------------------------------")
-      val actualCuisine = cuisinesNames(r._2.toInt)
-      val predictedCuisine = cuisinesNames(r._3.toInt)
-      val ingredientsIndices = r._4.toSparse.indices.map(_.toInt)
+      val recipeId = r._1.toInt
+      val predictedCuisine = cuisinesNames(r._2.toInt)
+      val ingredientsIndices = r._3.toSparse.indices.map(_.toInt)
       println(
-        s"Actual: ${actualCuisine.toUpperCase()} [${r._1}] | " +
+        s"Recipe Id: $recipeId | " +
           s"Predicted: ${predictedCuisine.toUpperCase()} ")
       println("  Ingredients:")
       ingredientsIndices.foreach(i => println(s"  - ${ingredientsNames(i)}"))
 
     }
-    println("--------------------------------------------------")
-    println(f"Accuracy = ${accuracy * 100}%.2f%%")
-    println(f"Error    = ${error * 100}%.2f%%")
-    println(s"Test Mean Squared Error = $testMSE")
 
   }
 

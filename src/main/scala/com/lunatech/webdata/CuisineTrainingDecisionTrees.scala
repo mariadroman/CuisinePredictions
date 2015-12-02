@@ -8,8 +8,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object CuisineTrainingDecisionTrees {
 
-  val maxDepth = 30
-  val maxBins = 64
+  val maxDepth = 20
+  val maxBins = 32
 
   def main(args: Array[String]) = {
 
@@ -48,6 +48,8 @@ object CuisineTrainingDecisionTrees {
     val model = DecisionTree.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       impurity, maxDepth, maxBins)
 
+    evaluateModel("DecisionTree with Gini", model, trainingData)
+
     removeDir(Configuration.dtGiniPath)
     model.save(sc, Configuration.dtGiniPath)
   }
@@ -61,6 +63,8 @@ object CuisineTrainingDecisionTrees {
     val model = DecisionTree.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       impurity, maxDepth, maxBins)
 
+    evaluateModel("DecisionTree with Entropy", model, trainingData)
+
     removeDir(Configuration.dtEntropyPath)
     model.save(sc, Configuration.dtEntropyPath)
   }
@@ -73,6 +77,8 @@ object CuisineTrainingDecisionTrees {
 
     val model = DecisionTree.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       impurity, maxDepth, maxBins)
+
+    evaluateModel("DecisionTree with Variance", model, trainingData)
 
     removeDir(Configuration.dtVariancePath)
     model.save(sc, Configuration.dtVariancePath)

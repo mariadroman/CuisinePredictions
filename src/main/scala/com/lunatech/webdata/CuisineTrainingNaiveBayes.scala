@@ -37,6 +37,8 @@ object CuisineTrainingNaiveBayes {
 
      val model = NaiveBayes.train(trainingData, lambda = 1.0, modelType = "multinomial")
 
+     evaluateModel("NaiveBayes", model, trainingData)
+
      removeDir(Configuration.naiveBayesPath)
      model.save(sc, Configuration.naiveBayesPath)
    }

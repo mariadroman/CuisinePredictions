@@ -3,6 +3,9 @@ package com.lunatech.webdata
 
 object Configuration {
 
+  val inputTrainingData = "src/test/resources/train.json"
+  val inputTestingData = "src/test/resources/test.json"
+
   private val modelRootPath = "working_model"
 
   val dataPath = s"$modelRootPath/input_data"
