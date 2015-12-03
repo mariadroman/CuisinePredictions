@@ -1,12 +1,14 @@
-package com.lunatech.webdata
+package com.lunatech.webdata.cuisine.mllib
 
-import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, SVMWithSGD, NaiveBayes}
+import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine.Configuration
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object CuisineTrainingLogisticRegression {
+object TrainingLogisticRegression {
 
    val maxDepth = 20
    val maxBins = 32
@@ -26,22 +28,25 @@ object CuisineTrainingLogisticRegression {
      val ingredientToIndex = sc.objectFile[(String, Int)](Configuration.ingredientsPath).collect().toMap
      val ingredientsIndices = (0 until ingredientToIndex.size)
 
-     val trainingData = MLUtils.loadLabeledPoints(sc, Configuration.dataPath).cache()
+     val data = MLUtils.loadLabeledPoints(sc, Configuration.dataPath).cache()
 
      val numClasses = cuisineToIndex.size + 1
 
-     trainLogisticRegression(sc, trainingData, numClasses)
+     trainLogisticRegression(sc, data, numClasses)
 
    }
 
    // Train a DecisionTree model with gini impurity.
-   def trainLogisticRegression(sc: SparkContext, trainingData: RDD[LabeledPoint], numClasses: Int): Unit = {
+   def trainLogisticRegression(sc: SparkContext, data: RDD[LabeledPoint], numClasses: Int): Unit = {
+
+     val splits = data.randomSplit(Array(0.8, 0.2))
+     val (trainingData, testData) = (splits(0), splits(1))
 
      val model = new LogisticRegressionWithLBFGS()
        .setNumClasses(numClasses)
        .run(trainingData)
 
-     evaluateModel("LogisticRegression", model, trainingData)
+     evaluateModel("LogisticRegression", model, testData)
 
      removeDir(Configuration.logisticRegPath)
      model.save(sc, Configuration.logisticRegPath)

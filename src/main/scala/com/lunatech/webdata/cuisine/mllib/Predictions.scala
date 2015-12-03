@@ -1,15 +1,16 @@
-package com.lunatech.webdata
+package com.lunatech.webdata.cuisine.mllib
 
+import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine.{Configuration, ImportDataModel}
 import org.apache.hadoop.io.{LongWritable, Text}
-import org.apache.spark.mllib.classification.{ClassificationModel, NaiveBayesModel, LogisticRegressionModel}
+import org.apache.spark.mllib.classification.{ClassificationModel, LogisticRegressionModel, NaiveBayesModel}
 import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.model.{RandomForestModel, DecisionTreeModel}
+import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object CuisinePredictions {
+object Predictions {
 
   val dataPath: String = Configuration.inputTestingData
 
@@ -35,7 +36,7 @@ object CuisinePredictions {
     val cuisinesNames = cuisineToIndex.map(r => r._2 -> r._1)
     val ingredientsNames = ingredientToIndex.map(r => r._2 -> r._1)
 
-    val testData = testRecipes.map { r =>
+    val predictData = testRecipes.map { r =>
       // Hmm... we have some new ingredients... should we ignore them? For now yes.
       val filteredIngredients = r.ingredients.filter(ingredientToIndex.keySet.contains(_))
       val values = filteredIngredients.map(i => 1.0).toArray
@@ -44,6 +45,7 @@ object CuisinePredictions {
       (r.id, vector)
     }
 
+    val validationData = MLUtils.loadLabeledPoints(sc, Configuration.dataPath).cache()
 
     def loadClassModel(modelType: String): ClassificationModel = modelType match {
       case "logisticRegression" => LogisticRegressionModel.load(sc, Configuration.logisticRegPath)
@@ -60,15 +62,16 @@ object CuisinePredictions {
       case "gini" => RandomForestModel.load(sc, Configuration.rfGiniPath)
     }
 
-    val model = loadTreeModel("gini")
+    val model = loadClassModel("logisticRegression")
+    // val model = loadTreeModel("gini")
 
     // Evaluate model on test instances and compute test error
-    val predictions = testData.map { pk =>
+    val predictions = predictData.map { pk =>
       val prediction = model.predict(pk._2)
       (pk._1,prediction, pk._2)
     }
 
-    predictions.takeSample(false, 20).foreach{ r =>
+    predictions.takeSample(false, 30).foreach{ r =>
       println("--------------------------------------------------")
       val recipeId = r._1.toInt
       val predictedCuisine = cuisinesNames(r._2.toInt)
@@ -80,6 +83,9 @@ object CuisinePredictions {
       ingredientsIndices.foreach(i => println(s"  - ${ingredientsNames(i)}"))
 
     }
+
+
+    evaluateModel("Test against all Training data", model, validationData)
 
   }
 

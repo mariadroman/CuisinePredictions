@@ -3,7 +3,7 @@ package com.lunatech
 import org.apache.commons.io.FileUtils
 import org.apache.spark.mllib.classification.ClassificationModel
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
+import org.apache.spark.mllib.tree.model.{GradientBoostedTreesModel, DecisionTreeModel, RandomForestModel}
 import org.apache.spark.rdd.RDD
 
 /**
@@ -43,6 +43,17 @@ package object webdata {
     }
     printModelEvaluation(name, labelsAndPreditions)
   }
+
+  def evaluateModel(name: String, model: GradientBoostedTreesModel, testData: RDD[LabeledPoint]) = {
+    // Evaluate model on test instances and compute test error
+    val labelsAndPreditions = testData.map { point =>
+      val prediction = model.predict(point.features)
+      (point.label, prediction)
+    }
+    printModelEvaluation(name, labelsAndPreditions)
+  }
+
+
 
     private def printModelEvaluation(name: String, labelsAndPreditions: RDD[(Double, Double)]) = {
 

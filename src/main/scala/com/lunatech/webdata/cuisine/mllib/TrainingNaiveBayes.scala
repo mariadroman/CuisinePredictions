@@ -1,12 +1,14 @@
-package com.lunatech.webdata
+package com.lunatech.webdata.cuisine.mllib
 
+import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine.Configuration
 import org.apache.spark.mllib.classification.NaiveBayes
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object CuisineTrainingNaiveBayes {
+object TrainingNaiveBayes {
 
    val maxDepth = 30
    val maxBins = 64
@@ -26,18 +28,22 @@ object CuisineTrainingNaiveBayes {
      val ingredientToIndex = sc.objectFile[(String, Int)](Configuration.ingredientsPath).collect().toMap
      val ingredientsIndices = (0 until ingredientToIndex.size)
 
-     val trainingData = MLUtils.loadLabeledPoints(sc, Configuration.dataPath).cache()
+     val data = MLUtils.loadLabeledPoints(sc, Configuration.dataPath).cache()
 
-     trainNaiveBayes(sc, trainingData)
+     trainNaiveBayes(sc, data)
 
    }
 
    // Train a DecisionTree model with gini impurity.
-   def trainNaiveBayes(sc: SparkContext, trainingData: RDD[LabeledPoint]): Unit = {
+   def trainNaiveBayes(sc: SparkContext, data: RDD[LabeledPoint]): Unit = {
 
-     val model = NaiveBayes.train(trainingData, lambda = 1.0, modelType = "multinomial")
+     val splits = data.randomSplit(Array(0.8, 0.2))
+     val (trainingData, testData) = (splits(0), splits(1))
+     val modelType = "multinomial" // "bernoulli"
 
-     evaluateModel("NaiveBayes", model, trainingData)
+     val model = NaiveBayes.train(trainingData, lambda = 1.0, modelType)
+
+     evaluateModel("NaiveBayes", model, testData)
 
      removeDir(Configuration.naiveBayesPath)
      model.save(sc, Configuration.naiveBayesPath)

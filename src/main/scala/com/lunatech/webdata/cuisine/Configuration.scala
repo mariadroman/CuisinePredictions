@@ -1,5 +1,4 @@
-package com.lunatech.webdata
-
+package com.lunatech.webdata.cuisine
 
 object Configuration {
 
@@ -26,5 +25,7 @@ object Configuration {
   val rfGiniPath = trainingDataRoot + "_rf_gini"
   val rfEntropyPath = trainingDataRoot + "_rf_entropy"
   val rfVariancePath = trainingDataRoot + "_rf_variance"
+
+  val gbtPath = trainingDataRoot + "_gbt"
 
 }

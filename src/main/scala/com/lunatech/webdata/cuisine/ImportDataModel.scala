@@ -1,5 +1,6 @@
-package com.lunatech.webdata
+package com.lunatech.webdata.cuisine
 
+import com.lunatech.webdata._
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
