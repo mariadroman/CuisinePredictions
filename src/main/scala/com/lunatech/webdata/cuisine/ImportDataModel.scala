@@ -15,7 +15,7 @@ object ImportDataModel {
 
   def main(args: Array[String]) = {
 
-    val conf = new SparkConf().setAppName("ImportDataModel").
+    val conf = new SparkConf(true).setAppName("ImportDataModel").
       setMaster("local[*]").
       set("spark.driver.memory", "16g").
       set("spark.executor.memory", "16g").

@@ -37,8 +37,6 @@ object TrainingDecisionTrees {
 
 //    trainEntropy(sc, data, numClasses, numFeatures)
 
-//    trainVariance(sc, data, numClasses, numFeatures)
-
   }
 
   // Train a DecisionTree model with gini impurity.
@@ -78,24 +76,4 @@ object TrainingDecisionTrees {
     removeDir(Configuration.dtEntropyPath)
     model.save(sc, Configuration.dtEntropyPath)
   }
-
-  // Train a DecisionTree model with variance impurity
-  def trainVariance(sc: SparkContext, data: RDD[LabeledPoint], numClasses: Int, numFeatures: Int): Unit = {
-
-    val splits = data.randomSplit(Array(0.8, 0.2))
-    val (trainingData, testData) = (splits(0), splits(1))
-
-    //  Empty categoricalFeaturesInfo indicates all features are continuous.
-    val categoricalFeaturesInfo = (0 until numFeatures).map(i => i -> 2).toMap
-    val impurity = "variance"
-
-    val model = DecisionTree.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
-      impurity, maxDepth, maxBins)
-
-    evaluateModel("DecisionTree with Variance", model, testData)
-
-    removeDir(Configuration.dtVariancePath)
-    model.save(sc, Configuration.dtVariancePath)
-  }
-
 }
