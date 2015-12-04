@@ -13,6 +13,7 @@ object TrainingRandomForest {
   val maxDepth = 5
   val maxBins = 100
   val numTrees = 12
+  val impurity = "gini" // "entropy"
   val featureSubsetStrategy = "auto" // Let the algorithm choose.
 
   def main(args: Array[String]) = {
@@ -48,34 +49,14 @@ object TrainingRandomForest {
 
     //  Empty categoricalFeaturesInfo indicates all features are continuous.
     val categoricalFeaturesInfo = (0 until numFeatures).map(i => i -> 2).toMap
-    val impurity = "gini"
 
     val model = RandomForest.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
 
-    evaluateModel("RandomForest with Gini", model, testData)
+    evaluateModel(s"RandomForest with $impurity", model, testData)
 
     removeDir(Configuration.rfGiniPath)
     model.save(sc, Configuration.rfGiniPath)
-  }
-
-  // Train a DecisionTree model with entropy impurity
-  def trainEntropy(sc: SparkContext, data: RDD[LabeledPoint], numClasses: Int, numFeatures: Int): Unit = {
-
-    val splits = data.randomSplit(Array(0.8, 0.2))
-    val (trainingData, testData) = (splits(0), splits(1))
-
-    //  Empty categoricalFeaturesInfo indicates all features are continuous.
-    val categoricalFeaturesInfo = (0 until numFeatures).map(i => i -> 2).toMap
-    val impurity = "entropy"
-
-    val model = RandomForest.trainClassifier(trainingData, numClasses, categoricalFeaturesInfo,
-      numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
-
-    evaluateModel("RandomForest with Entropy", model, testData)
-
-    removeDir(Configuration.rfEntropyPath)
-    model.save(sc, Configuration.rfEntropyPath)
   }
 
 }

@@ -4,8 +4,8 @@ import com.lunatech.webdata.CustomLineInputFormat
 import com.lunatech.webdata.cuisine.{Configuration, ImportDataModel}
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.classification.NaiveBayes
-import org.apache.spark.ml.feature.{VectorIndexer, HashingTF, StringIndexer}
+import org.apache.spark.ml.classification.LogisticRegression
+import org.apache.spark.ml.feature.{HashingTF, IndexToString, StringIndexer, VectorIndexer}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
@@ -44,7 +44,8 @@ object PredictionPipeline {
     // Index labels, adding metadata to the label column.
     val labelIndexer = new StringIndexer()
       .setInputCol("cuisine")
-      .setOutputCol("indexedLabel")
+      .setOutputCol("label")
+      .fit(data)
 
     // Automatically identify categorical features, and index them.
     val featureIndexer =
@@ -53,25 +54,36 @@ object PredictionPipeline {
       .setOutputCol("indexedFeatures")
       .setMaxCategories(20) // features with > 4 distinct values are treated as continuous
 
-
-    // Split the data into training and test sets (5% held out for testing)
-    val Array(trainingData, testData) = data.randomSplit(Array(0.95, 0.05))
-
     // Train a DecisionTree model.
-    val trainer = new NaiveBayes()
-      .setLabelCol("indexedLabel")
+    val trainer = new LogisticRegression()
+      .setLabelCol("label")
       .setFeaturesCol("features")
 
-    val pipeline = new Pipeline()
-      .setStages(Array(labelIndexer, ingredientsHasher, featureIndexer, trainer))
+    val labelConverter = new IndexToString()
+      .setInputCol("prediction")
+      .setOutputCol("predictedLabel")
+      .setLabels(labelIndexer.labels)
 
-    pipeline.explainParams()
+    val pipeline = new Pipeline()
+      .setStages(Array(labelIndexer,
+        ingredientsHasher,
+//        featureIndexer,
+        trainer,
+        labelConverter))
+
 
     println("----------------")
 
+    println(s"Pipeline Params: \n${pipeline.explainParams()}")
+
+    // Split the data into training and test sets (5% held out for testing)
+    val Array(trainingData, testData) = data.randomSplit(Array(0.4, 0.6))
+
     val model = pipeline.fit(trainingData)
 
-    model.explainParams()
+    println("----------------")
+
+    println(s"Model Params: \n${model.explainParams()}")
 
     val predictions = model.transform(testData)
 
@@ -79,9 +91,18 @@ object PredictionPipeline {
     println("---------------------------------")
     println("PREDICTIONS")
     predictions.printSchema()
-    val accuracy = predictions.select("cuisine", "prediction", "indexedLabel")
+
+    val collectedPredictions = predictions.select("cuisine", "predictedLabel", "prediction", "label")
       .collect
-      .filter(r => r.getAs[Double]("prediction") == r.getAs[Double]("indexedLabel")).size.toDouble / predictions.count()
+    println(f"${"Actual"}%30s  |  ${"Predicted"}")
+    println(f"${"---------------------------"}%30s  |  ${"---------------------------"}")
+    collectedPredictions
+      .take(20)
+      .foreach(r => println(f"${r.getAs[String]("cuisine")}%30s  |  ${r.getAs[String]("predictedLabel")}"))
+
+
+    val accuracy = collectedPredictions
+      .filter(r => r.getAs[Double]("prediction") == r.getAs[Double]("label")).size.toDouble / predictions.count()
 
     println("---------------------------------")
     println(f"Accuracy = ${accuracy * 100}%.4f%%")

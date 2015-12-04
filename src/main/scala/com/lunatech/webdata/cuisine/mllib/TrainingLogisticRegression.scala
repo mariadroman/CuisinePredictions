@@ -10,9 +10,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object TrainingLogisticRegression {
 
-   val maxDepth = 20
-   val maxBins = 32
-
    def main(args: Array[String]) = {
 
 

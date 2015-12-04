@@ -65,7 +65,7 @@ object Predictions {
     }
 
     val model = loadClassModel("logisticRegression")
-    // val model = loadTreeModel("gini")
+//     val model = loadTreeModel("gini")
 
     // Evaluate model on test instances and compute test error
     val predictions = predictData.map { pk =>

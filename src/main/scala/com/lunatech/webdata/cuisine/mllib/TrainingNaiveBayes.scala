@@ -12,6 +12,7 @@ object TrainingNaiveBayes {
 
    val maxDepth = 30
    val maxBins = 64
+  val modelType = "multinomial" // "bernoulli"
 
    def main(args: Array[String]) = {
 
@@ -39,7 +40,6 @@ object TrainingNaiveBayes {
 
      val splits = data.randomSplit(Array(0.8, 0.2))
      val (trainingData, testData) = (splits(0), splits(1))
-     val modelType = "multinomial" // "bernoulli"
 
      val model = NaiveBayes.train(trainingData, lambda = 1.0, modelType)
 
