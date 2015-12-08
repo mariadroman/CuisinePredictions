@@ -11,8 +11,8 @@ trait Trainer[M] {
 
   def train(flowData: FlowData)(implicit sc: SparkContext): Model[M]
 
-  def trainEvaluate(flowData: FlowData, trainingQuota: Double = 0.8)
-                   (implicit sc: SparkContext): (Model[M], MulticlassMetrics, Trainer.Runtime) = {
+  def trainEvaluate(flowData: FlowData, trainingQuota: Double = 0.7)
+                   (implicit sc: SparkContext): (Model[M], MulticlassMetrix) = {
 
     val splits = flowData.data.randomSplit(Array(trainingQuota, 1 - trainingQuota))
     val (trainingData, testData) = (splits(0), splits(1))
@@ -25,15 +25,15 @@ trait Trainer[M] {
       val prediction = model.predict(point.features)
       (prediction, point.label)
     }
-    val metrics = new MulticlassMetrics(predictionAndLabels)
+    val metrics = MulticlassMetrix(new MulticlassMetrics(predictionAndLabels), flowData, runtime)
 
-    (model, metrics, runtime)
+    (model, metrics)
 
   }
 }
 
 object Trainer {
 
-  type Runtime = Double
+  type Runtime = Long
 
 }

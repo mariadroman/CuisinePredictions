@@ -15,6 +15,7 @@ trait Model[T] extends Serializable {
   def predict(testData: Vector) : Double
   def predict(testData: RDD[Vector]) : RDD[Double]
   def save(path: String)(implicit sc: SparkContext): Unit
+  def name = self.getClass.getSimpleName
 }
 
 

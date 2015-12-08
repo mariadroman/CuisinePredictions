@@ -1,6 +1,7 @@
 package com.lunatech.webdata.cuisine.mllib.trainers
 
 import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.Configuration
 import com.lunatech.webdata.cuisine.mllib.{FlowData, Trainer}
 import org.apache.spark.mllib.tree.RandomForest
@@ -16,8 +17,8 @@ import org.apache.spark.{SparkConf, SparkContext}
  * @param featureSubsetStrategy
  */
 class RandomForestTrainer(maxDepth: Int = 15,
-                          maxBins: Int = 1000,
-                          numTrees: Int = 12,
+                          maxBins: Int = 500,
+                          numTrees: Int = 15,
                           impurity: String = "gini",
                           featureSubsetStrategy: String = "auto" )
   extends Trainer[RandomForestModel] {
@@ -51,14 +52,14 @@ object RandomForestTrainer {
 
     val flowData = FlowData.load(Configuration.dataPath)
 
-    val (model, metrics, runtime) = RandomForestTrainer().trainEvaluate(flowData)
+    val (model, metrics) = RandomForestTrainer().trainEvaluate(flowData)
 
     removeDir(Configuration.randomForestPath)
     model.save(Configuration.randomForestPath)
 
-    printEvaluationMetrics(model, metrics)
-    println(s"Training for ${model.self.getClass.getSimpleName} was completed in ${runtime/1000} seconds.")
+    println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 
+    printEvaluationMetrix(metrics)
 
   }
 

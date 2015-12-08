@@ -1,7 +1,7 @@
 package com.lunatech.webdata.cuisine.mllib.trainers
 
 import com.lunatech.webdata._
-import com.lunatech.webdata.cuisine.Configuration
+import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.mllib.{FlowData, Trainer}
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -35,13 +35,15 @@ object NaiveBayesTrainer {
 
     val flowData = FlowData.load(Configuration.dataPath)
 
-    val (model, metrics, runtime) = NaiveBayesTrainer().trainEvaluate(flowData)
+    val (model, metrics) = NaiveBayesTrainer().trainEvaluate(flowData)
 
     removeDir(Configuration.naiveBayesPath)
     model.save(Configuration.naiveBayesPath)
 
-    printEvaluationMetrics(model, metrics)
-    println(s"Training for ${model.self.getClass.getSimpleName} was completed in ${runtime/1000} seconds.")
+    println(s"### ${model.self.getClass.getSimpleName} model evaluation")
+
+    printEvaluationMetrix(metrics)
+
   }
 
 }

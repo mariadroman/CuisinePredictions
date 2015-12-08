@@ -1,4 +1,4 @@
-package com.lunatech.webdata.cuisine
+package com.lunatech.webdata.cuisine.model
 
 /**
  *

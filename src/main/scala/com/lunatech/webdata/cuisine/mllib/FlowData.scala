@@ -16,11 +16,14 @@ case class FlowData(data: RDD[LabeledPoint],
                     labelToIndex: Map[String, Int],
                     featureToIndex: Map[String, Int]) {
 
+  // TODO: I have some funky ideas for this class... I smell a monad...
+
   import FlowData._
 
-  lazy val indexToLabel = labelToIndex.map(r => r._2 -> r._1)
-  lazy val indexToFeature = featureToIndex.map(r => r._2 -> r._1)
+  def indexToLabel = labelToIndex.map(r => r._2 -> r._1)
+  def indexToFeature = featureToIndex.map(r => r._2 -> r._1)
 
+  def map(f: (FlowData) => FlowData): FlowData =  f(this)
 
   // TODO FlowData DAO should be transparent (e.g. dealt with by third party)
   def save(rootPath: String)(implicit sc: SparkContext) = {

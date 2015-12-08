@@ -1,8 +1,7 @@
 package com.lunatech
 
-import com.lunatech.webdata.cuisine.mllib.Model
 import org.apache.commons.io.FileUtils
-import org.apache.spark.mllib.evaluation.MulticlassMetrics
+
 
 /**
   * Common utilities
@@ -13,20 +12,6 @@ package object webdata {
     val dir = new java.io.File(path)
     if (dir exists)
       FileUtils.deleteDirectory(dir)
-  }
-
-
-  def printEvaluationMetrics[T](model: Model[T], metrics: MulticlassMetrics) = {
-
-    println(s"\n### ${model.self.getClass.getSimpleName} model evaluation")
-    println( "| Parameter                    | Value     |")
-    println( "| :--------------------------- | --------: |")
-    println(f"| Precision                    | ${metrics.precision * 100}%8.4f%% |")
-    println(f"| Error                        | ${(1 - metrics.precision) * 100}%8.4f%% |")
-    println(f"| Weighted Precision           | ${metrics.weightedPrecision * 100}%8.4f%% |")
-    println(f"| Weighted True Positive Rate  | ${metrics.weightedTruePositiveRate * 100}%8.4f%% |")
-    println(f"| Weighted False Positive Rate | ${metrics.weightedFalsePositiveRate * 100}%8.4f%% |")
-
   }
 
   /**
