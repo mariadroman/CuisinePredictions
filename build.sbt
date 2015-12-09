@@ -1,4 +1,4 @@
-name := "CuisinePredictionConsumer"
+name := "cuisine-predictions"
 
 version := "0.1.0"
 
@@ -11,3 +11,13 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % "1.5.2"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.5.2"
 
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "1.5.2"
+
+assemblyJarName in assembly := s"${name.value}-fat.jar"
+
+// Add exclusions, provided...
+assemblyMergeStrategy in assembly := {
+  {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case x => MergeStrategy.first
+  }
+}

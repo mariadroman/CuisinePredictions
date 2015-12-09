@@ -1,13 +1,14 @@
 package com.lunatech.webdata.cuisine
 
-import java.io.{FileInputStream, ObjectInputStream, FileOutputStream, ObjectOutputStream}
+import java.io._
 
 import com.lunatech.webdata._
-import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, Model}
+import com.lunatech.webdata.cuisine.mllib.{Model, MulticlassMetrix}
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.classification.{NaiveBayesModel, LogisticRegressionModel}
-import org.apache.spark.mllib.tree.model.{RandomForestModel, DecisionTreeModel}
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, NaiveBayesModel}
+import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 
+import scala.reflect.Manifest
 import scala.util.Try
 
 /**
@@ -15,37 +16,54 @@ import scala.util.Try
  */
 object DaoUtils {
 
-
-  def saveModel(model: Model[_])(implicit sc: SparkContext) = {
+  def saveModel(model: Model[_])(implicit sc: SparkContext, configuration: Configuration) = {
     val path = getPath(model)
-    removeDir(path)
+    removeFile(path)
     model.save(path)
   }
 
-  def saveMetrix(model: Model[_], metrics: MulticlassMetrix)(implicit sc: SparkContext) = {
+  def saveMetrix(model: Model[_], metrics: MulticlassMetrix)(implicit sc: SparkContext, configuration: Configuration) = {
     val path = getPath(model) + ".metrics"
-    Try(new java.io.File(path).delete())
-    Try(new ObjectOutputStream(new FileOutputStream(path)))
-      .foreach{p =>
-        p.writeObject(metrics); p.close
-      }
+    removeFile(path)
+    toJsonFile(metrics, path)
   }
-  def loadMetrix(model: Model[_])(implicit sc: SparkContext): Try[MulticlassMetrix] = {
+  def loadMetrix[T](model: Model[_])(implicit sc: SparkContext, mf: Manifest[T], configuration: Configuration):
+      Try[MulticlassMetrix] = {
     val path = getPath(model) + ".metrics"
-
-    Try(new ObjectInputStream(new FileInputStream(path)))
-      .map{ p =>
-        val metrics = p.readObject().asInstanceOf[MulticlassMetrix]
-        p.close
-        metrics
-      }
+    fromJsonFile[MulticlassMetrix](path)
   }
 
-  def getPath(model: Model[_]) = model.self match {
-    case m1: LogisticRegressionModel => Configuration.logisticRegPath
-    case m2: NaiveBayesModel => Configuration.naiveBayesPath
-    case m2: DecisionTreeModel => Configuration.decisionTreePath
-    case m2: RandomForestModel => Configuration.randomForestPath
+  def getPath(model: Model[_])(implicit configuration: Configuration) = model.self match {
+    case m1: LogisticRegressionModel => configuration.logisticRegPath
+    case m2: NaiveBayesModel => configuration.naiveBayesPath
+    case m2: DecisionTreeModel => configuration.decisionTreePath
+    case m2: RandomForestModel => configuration.randomForestPath
   }
+
+  def toJsonFile[T <: scala.AnyRef](that: T, path: String): Boolean = {
+
+    import org.json4s._
+    import org.json4s.jackson.Serialization
+    import org.json4s.jackson.Serialization._
+    implicit val formats = Serialization.formats(NoTypeHints)
+    val writer = new BufferedWriter(new FileWriter(path, true))
+    val result = Try(write(that, writer)).isSuccess
+    Try(writer.close)
+    result
+  }
+
+
+  def fromJsonFile[T](path: String)(implicit mf: Manifest[T]): Try[T] = {
+
+    import org.json4s._
+    import org.json4s.jackson.Serialization
+    import org.json4s.jackson.Serialization._
+    implicit val formats = Serialization.formats(NoTypeHints)
+    val reader = new FileReader(path)
+    val result = Try(read[T](reader))
+    Try(reader.close)
+    result
+  }
+
 
 }

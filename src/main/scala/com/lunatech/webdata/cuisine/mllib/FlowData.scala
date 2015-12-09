@@ -1,17 +1,18 @@
 package com.lunatech.webdata.cuisine.mllib
 
 import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine.DaoUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 
-/**s
- * This is the data that is passed along in the flow.
+/** s
+  * This is the data that is passed along in the flow.
   *
   * It contains all necessary data for training and essential data for prediction
   * (the index to label and index to feature mappings)
- */
+  */
 case class FlowData(data: RDD[LabeledPoint],
                     labelToIndex: Map[String, Int],
                     featureToIndex: Map[String, Int]) {
@@ -21,21 +22,22 @@ case class FlowData(data: RDD[LabeledPoint],
   import FlowData._
 
   def indexToLabel = labelToIndex.map(r => r._2 -> r._1)
+
   def indexToFeature = featureToIndex.map(r => r._2 -> r._1)
 
-  def map(f: (FlowData) => FlowData): FlowData =  f(this)
+  def map(f: (FlowData) => FlowData): FlowData = f(this)
 
   // TODO FlowData DAO should be transparent (e.g. dealt with by third party)
   def save(rootPath: String)(implicit sc: SparkContext) = {
 
-    removeDir(rootPath + dataDir)
+    removeFile(rootPath + dataDir)
     data.saveAsTextFile(rootPath + dataDir)
 
-    removeDir(rootPath + labelsDir)
-    sc.parallelize(labelToIndex.toSeq).saveAsObjectFile(rootPath + labelsDir)
+    removeFile(rootPath + labelsDir)
+    DaoUtils.toJsonFile(labelToIndex, rootPath + labelsDir)
 
-    removeDir(rootPath + featuresDir)
-    sc.parallelize(featureToIndex.toSeq).saveAsObjectFile(rootPath + featuresDir)
+    removeFile(rootPath + featuresDir)
+    DaoUtils.toJsonFile(featureToIndex, rootPath + featuresDir)
 
   }
 
@@ -60,8 +62,8 @@ object FlowData {
   def load(rootPath: String)(implicit sc: SparkContext): FlowData = {
     FlowData(
       MLUtils.loadLabeledPoints(sc, rootPath + dataDir),
-      sc.objectFile[(String, Int)](rootPath + labelsDir).collect().toMap,
-      sc.objectFile[(String, Int)](rootPath + featuresDir).collect().toMap
+      DaoUtils.fromJsonFile[Map[String, Int]](rootPath + labelsDir).get,
+      DaoUtils.fromJsonFile[Map[String, Int]](rootPath + featuresDir).get
     )
   }
 

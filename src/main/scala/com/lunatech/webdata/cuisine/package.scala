@@ -1,6 +1,7 @@
 package com.lunatech.webdata
 
-import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, FlowData, Trainer}
+import com.lunatech.webdata.cuisine.mllib.trainers.Trainer
+import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, FlowData}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 
 /**

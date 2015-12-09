@@ -9,10 +9,17 @@ object MainMlLib {
 
   def main(args: Array[String]) = {
 
-    val conf = new SparkConf().setAppName("CuisineRecipesImportData").
-      setMaster("local[*]")
+    val defConf = new SparkConf(true)
+    val conf = defConf.setAppName("CuisineRecipesImportData").
+      setMaster(defConf.get("spark.master",  "local[*]"))
 
     implicit val sc = new SparkContext(conf)
+    implicit val configuration = Configuration(args)
+
+    run
+  }
+
+  def run(implicit sc: SparkContext, configuration: Configuration) = {
 
     val runners = List(ImportData, BuildModels, BuildPredictions)
 

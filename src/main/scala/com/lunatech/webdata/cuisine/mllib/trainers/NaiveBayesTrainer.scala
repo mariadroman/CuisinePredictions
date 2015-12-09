@@ -2,7 +2,7 @@ package com.lunatech.webdata.cuisine.mllib.trainers
 
 import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
-import com.lunatech.webdata.cuisine.mllib.{FlowData, Trainer}
+import com.lunatech.webdata.cuisine.mllib.FlowData
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -32,13 +32,14 @@ object NaiveBayesTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
+    val configuration = Configuration(args)
 
-    val flowData = FlowData.load(Configuration.dataPath)
+    val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = NaiveBayesTrainer().trainEvaluate(flowData)
 
-    removeDir(Configuration.naiveBayesPath)
-    model.save(Configuration.naiveBayesPath)
+    removeFile(configuration.naiveBayesPath)
+    model.save(configuration.naiveBayesPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

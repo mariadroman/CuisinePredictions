@@ -9,6 +9,6 @@ import org.apache.spark.SparkContext
  */
 trait SparkRunner {
 
-  def run(implicit sc: SparkContext)
+  def run(implicit sc: SparkContext, configuration: Configuration)
 
 }

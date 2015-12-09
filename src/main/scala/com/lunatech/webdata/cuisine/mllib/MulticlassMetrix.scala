@@ -1,5 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib
 
+import com.lunatech.webdata.cuisine.mllib.trainers.Trainer
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 
 /**

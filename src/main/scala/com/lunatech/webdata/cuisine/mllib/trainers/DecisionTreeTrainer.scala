@@ -2,7 +2,7 @@ package com.lunatech.webdata.cuisine.mllib.trainers
 
 import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
-import com.lunatech.webdata.cuisine.mllib.{FlowData, Model, Trainer}
+import com.lunatech.webdata.cuisine.mllib.{FlowData, Model}
 import org.apache.spark.mllib.tree.DecisionTree
 import org.apache.spark.mllib.tree.model.DecisionTreeModel
 import org.apache.spark.{SparkConf, SparkContext}
@@ -44,13 +44,14 @@ object DecisionTreeTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
+    val configuration = Configuration(args)
 
-    val flowData = FlowData.load(Configuration.dataPath)
+    val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = DecisionTreeTrainer().trainEvaluate(flowData)
 
-    removeDir(Configuration.decisionTreePath)
-    model.save(Configuration.decisionTreePath)
+    removeFile(configuration.decisionTreePath)
+    model.save(configuration.decisionTreePath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

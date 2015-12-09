@@ -1,6 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib.transformers
 
-import com.lunatech.webdata.cuisine.mllib.{FlowData, Transformer}
+import com.lunatech.webdata.cuisine.mllib.FlowData
 import org.apache.spark.mllib.feature.ChiSqSelector
 import org.apache.spark.mllib.regression.LabeledPoint
 
@@ -26,12 +26,12 @@ case class ChiSqSelectorTransformer(topFeatures: Double) extends Transformer {
       LabeledPoint(lp.label, transformer.transform(lp.features))
     }
 
-    val filteredFeatures = flowData.featureToIndex
+    val filteredFeaturesIndex = flowData.featureToIndex
       .filter { case (feature, index) =>
         transformer.selectedFeatures.contains(index)
       }
 
-    FlowData(filteredData, flowData.labelToIndex, filteredFeatures)
+    FlowData(filteredData, flowData.labelToIndex, filteredFeaturesIndex)
 
   }
 }

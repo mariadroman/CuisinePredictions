@@ -1,7 +1,7 @@
 package com.lunatech.webdata.cuisine
 
-import com.lunatech.webdata.cuisine.mllib.trainers.{RandomForestTrainer, DecisionTreeTrainer, NaiveBayesTrainer, LogisticRegressionTrainer}
-import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, FlowData, Model, Trainer}
+import com.lunatech.webdata.cuisine.mllib.trainers._
+import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, FlowData, Model}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -11,27 +11,28 @@ object BuildModels extends SparkRunner {
 
   def main(args: Array[String]) = {
 
-    val conf = new SparkConf().setAppName("CuisineRecipesBuildModels").
-      setMaster("local[*]")
+    val defConf = new SparkConf(true)
+    val conf = defConf.setAppName("CuisineRecipesImportData").
+      setMaster(defConf.get("spark.master",  "local[*]"))
 
     implicit val sc = new SparkContext(conf)
+    implicit val configuration = Configuration(args)
 
     run
 
   }
 
-  def run(implicit sc: SparkContext) = {
+  def run(implicit sc: SparkContext, configuration: Configuration) = {
 
     import DaoUtils._
 
     // Load the flow data
-    val flowData = FlowData.load(Configuration.dataPath)
+    val flowData = FlowData.load(configuration.dataPath)
 
     def train[T](trainer: Trainer[T]): (Model[T], MulticlassMetrix) =
       trainer.trainEvaluate(flowData)
 
-    val trainers = List(LogisticRegressionTrainer()
-      , NaiveBayesTrainer()
+    val trainers = List(LogisticRegressionTrainer(), NaiveBayesTrainer()
       , DecisionTreeTrainer(), RandomForestTrainer()
     )
 
@@ -44,7 +45,7 @@ object BuildModels extends SparkRunner {
 
     // Print the models evaluation (GitHub friendly)
     trainingResults.foreach { case (model, metrics) =>
-      println(s"### ${model.name} model evaluation")
+      println(s"\n### ${model.name} model evaluation")
       printEvaluationMetrix(metrics)
       saveMetrix(model, metrics)
     }

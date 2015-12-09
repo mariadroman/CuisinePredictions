@@ -3,7 +3,7 @@ package com.lunatech.webdata.cuisine.mllib.trainers
 import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.Configuration
-import com.lunatech.webdata.cuisine.mllib.{FlowData, Trainer}
+import com.lunatech.webdata.cuisine.mllib.FlowData
 import org.apache.spark.mllib.tree.RandomForest
 import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.{SparkConf, SparkContext}
@@ -49,13 +49,14 @@ object RandomForestTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
+    val configuration = Configuration(args)
 
-    val flowData = FlowData.load(Configuration.dataPath)
+    val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = RandomForestTrainer().trainEvaluate(flowData)
 
-    removeDir(Configuration.randomForestPath)
-    model.save(Configuration.randomForestPath)
+    removeFile(configuration.randomForestPath)
+    model.save(configuration.randomForestPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

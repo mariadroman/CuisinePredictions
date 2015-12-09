@@ -2,7 +2,7 @@ package com.lunatech.webdata.cuisine.mllib.trainers
 
 import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
-import com.lunatech.webdata.cuisine.mllib.{FlowData, Trainer}
+import com.lunatech.webdata.cuisine.mllib.FlowData
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -33,13 +33,14 @@ object LogisticRegressionTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
+    val configuration = Configuration(args)
 
-    val flowData = FlowData.load(Configuration.dataPath)
+    val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = LogisticRegressionTrainer().trainEvaluate(flowData)
 
-    removeDir(Configuration.logisticRegPath)
-    model.save(Configuration.logisticRegPath)
+    removeFile(configuration.logisticRegPath)
+    model.save(configuration.logisticRegPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

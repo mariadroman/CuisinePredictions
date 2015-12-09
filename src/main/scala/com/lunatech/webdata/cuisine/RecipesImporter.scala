@@ -13,23 +13,23 @@ import org.json4s.jackson.JsonMethods._
   */
 object RecipesImporter {
 
-  val dataPath: String = Configuration.inputTrainingData
-
   /**
     * Import recipes and save them as a Spark RDD
     * @param args
     */
   def main(args: Array[String]) = {
 
-    val conf = new SparkConf(true).setAppName(this.getClass.getSimpleName)
-      .setMaster("local[*]")
+    val defConf = new SparkConf(true)
+    val conf = defConf.setAppName("CuisineRecipesImportData").
+      setMaster(defConf.get("spark.master",  "local[*]"))
 
     implicit val sc = new SparkContext(conf)
+    implicit val configuration = Configuration(args)
 
-    val recipes = importFrom(dataPath)
+    val recipes = importFrom(configuration.inputTrainingData)
 
-    removeDir(Configuration.recipesPath)
-    recipes.saveAsObjectFile(Configuration.recipesPath)
+    removeFile(configuration.recipesPath)
+    recipes.saveAsObjectFile(configuration.recipesPath)
 
   }
 

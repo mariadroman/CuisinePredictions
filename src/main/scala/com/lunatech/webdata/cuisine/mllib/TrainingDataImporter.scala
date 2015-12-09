@@ -1,6 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib
 
-import com.lunatech.webdata.cuisine.RecipesImporter
+import com.lunatech.webdata.cuisine.{Configuration, RecipesImporter}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
@@ -10,7 +10,7 @@ import org.apache.spark.mllib.regression.LabeledPoint
   */
 object TrainingDataImporter {
 
-   def importFrom(inputFilePath: String)(implicit sc: SparkContext): FlowData = {
+   def importFrom(inputFilePath: String)(implicit sc: SparkContext, configuration: Configuration): FlowData = {
 
      val recipes = RecipesImporter.importFrom(inputFilePath)
 
