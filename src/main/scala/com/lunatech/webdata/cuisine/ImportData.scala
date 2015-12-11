@@ -15,8 +15,6 @@ object ImportData extends SparkRunner {
     val conf = defConf.setAppName("CuisineRecipesImportData").
       setMaster(defConf.get("spark.master",  "local[*]"))
 
-    conf.getAll.foreach(println)
-
     implicit val sc = new SparkContext(conf)
     implicit val configuration = Configuration(args)
 

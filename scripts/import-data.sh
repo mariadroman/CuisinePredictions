@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-# For development testing reasons, we need to reassembly when we change the code
-# sbt assembly
+# What do I do?
+###############
+
+# Import the training json data, process it and save it along with the meta-data
+# (labels and features indices).
+
 
 # CONFIGURATION SECTION
 #######################

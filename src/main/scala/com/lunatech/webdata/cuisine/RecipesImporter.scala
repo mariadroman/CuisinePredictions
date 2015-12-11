@@ -28,7 +28,6 @@ object RecipesImporter {
 
     val recipes = importFrom(configuration.inputTrainingData)
 
-    removeFile(configuration.recipesPath)
     recipes.saveAsObjectFile(configuration.recipesPath)
 
   }

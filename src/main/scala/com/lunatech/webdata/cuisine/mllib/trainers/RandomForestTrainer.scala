@@ -20,7 +20,7 @@ class RandomForestTrainer(maxDepth: Int = 15,
                           maxBins: Int = 500,
                           numTrees: Int = 15,
                           impurity: String = "gini",
-                          featureSubsetStrategy: String = "auto" )
+                          featureSubsetStrategy: String = "auto")
   extends Trainer[RandomForestModel] {
 
   def train(flowData: FlowData)(implicit sc: SparkContext) = {
@@ -41,7 +41,7 @@ class RandomForestTrainer(maxDepth: Int = 15,
 
 object RandomForestTrainer {
 
- def apply() = new RandomForestTrainer
+  def apply() = new RandomForestTrainer
 
   def main(args: Array[String]) = {
 
@@ -49,14 +49,15 @@ object RandomForestTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
-    val configuration = Configuration(args)
+    implicit val configuration = Configuration(args)
 
     val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = RandomForestTrainer().trainEvaluate(flowData)
 
-    removeFile(configuration.randomForestPath)
-    model.save(configuration.randomForestPath)
+    removeHdfsFile(configuration.randomForestPath)
+    //    model.save(configuration.randomForestPath)
+    DaoUtils.saveModel(model)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

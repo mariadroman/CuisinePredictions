@@ -1,5 +1,7 @@
 package com.lunatech
 
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs._
 import org.apache.commons.io.FileUtils
 
 
@@ -8,12 +10,14 @@ import org.apache.commons.io.FileUtils
   */
 package object webdata {
 
-  def removeFile(path: String) = {
-    val file = new java.io.File(path)
-    if (file.exists && file.isDirectory)
-      FileUtils.deleteDirectory(file)
-    else
-      file.delete()
+  def removeHdfsFile(path: String) = {
+    val hdfs = FileSystem.get(new Configuration())
+    val workingPath = new Path(path)
+    hdfs.delete(workingPath,true) // delete recursively
+  }
+
+  def removeLocalFile(path: String) = {
+    FileUtils.deleteQuietly(new java.io.File(path))
   }
 
   /**

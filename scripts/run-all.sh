@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# For development testing reasons, we need to reassembly when we change the code
-# sbt assembly
+# What do I do?
+###############
+
+# Run the entire project, from data import, model generation and prediction generation.
 
 # CONFIGURATION SECTION
 #######################
@@ -23,6 +25,7 @@ spark-submit \
   --conf spark.task.maxFailures=20 \
   --conf spark.driver.memory=$SPARK_DRIVER_MEMORY \
   --conf spark.executor.memory=$SPARK_EXECUTOR_MEMORY \
+  --deploy-mode client \
   --verbose \
   $JAR_FILE \
   app.input.file.training="$APP_INPUT_FILE_TRAINING" \

@@ -1,6 +1,5 @@
 package com.lunatech.webdata.cuisine.mllib.trainers
 
-import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.mllib.{FlowData, Model}
 import org.apache.spark.mllib.tree.DecisionTree
@@ -14,8 +13,8 @@ import org.apache.spark.{SparkConf, SparkContext}
  * @param impurity acceptable values: "gini" or "entropy"
  */
 class DecisionTreeTrainer(maxDepth: Int = 15,
-                                maxBins: Int = 500,
-                                impurity: String = "gini")
+                          maxBins: Int = 500,
+                          impurity: String = "gini")
   extends Trainer[DecisionTreeModel] {
 
   def train(flowData: FlowData)(implicit sc: SparkContext): Model[DecisionTreeModel] = {
@@ -44,14 +43,15 @@ object DecisionTreeTrainer {
       setMaster("local[*]")
 
     implicit val sc = new SparkContext(conf)
-    val configuration = Configuration(args)
+    implicit val configuration = Configuration(args)
 
     val flowData = FlowData.load(configuration.dataPath)
 
     val (model, metrics) = DecisionTreeTrainer().trainEvaluate(flowData)
 
-    removeFile(configuration.decisionTreePath)
-    model.save(configuration.decisionTreePath)
+    //    removeHdfsFile(configuration.decisionTreePath)
+    //    model.save(configuration.decisionTreePath)
+    DaoUtils.saveModel(model)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

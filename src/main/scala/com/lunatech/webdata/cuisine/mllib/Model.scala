@@ -1,5 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib
 
+import com.lunatech.webdata.cuisine.{Configuration, DaoUtils}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{NaiveBayesModel, LogisticRegressionModel}
 import org.apache.spark.mllib.tree.model.{RandomForestModel, DecisionTreeModel}
@@ -14,7 +15,7 @@ trait Model[T] extends Serializable {
   def self: T
   def predict(testData: Vector) : Double
   def predict(testData: RDD[Vector]) : RDD[Double]
-  def save(path: String)(implicit sc: SparkContext): Unit
+  def save(path: String)(implicit sc: SparkContext, configuration: Configuration): Unit
   def name = self.getClass.getSimpleName
 }
 
@@ -33,8 +34,9 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext) =
-      originalModel.save(sc, path)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
+      //        originalModel.save(sc, path)
+        DaoUtils.saveModel(this)
     }
 
   implicit def naiveBayesModelToModel(originalModel: NaiveBayesModel) =
@@ -49,8 +51,9 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext) =
-        originalModel.save(sc, path)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
+      //        originalModel.save(sc, path)
+        DaoUtils.saveModel(this)
     }
 
 
@@ -67,8 +70,9 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext) =
-        originalModel.save(sc, path)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
+//        originalModel.save(sc, path)
+        DaoUtils.saveModel(this)
     }
 
 
@@ -84,8 +88,9 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext) =
-        originalModel.save(sc, path)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
+      //        originalModel.save(sc, path)
+        DaoUtils.saveModel(this)
     }
 }
 

@@ -51,11 +51,18 @@ object BuildPredictions extends SparkRunner {
     // Set the models are we using for predictions
     val models: List[Model[_]] =
       List(
-        LogisticRegressionModel.load(sc, configuration.logisticRegPath),
-        NaiveBayesModel.load(sc, configuration.naiveBayesPath),
-        DecisionTreeModel.load(sc, configuration.decisionTreePath),
-        RandomForestModel.load(sc, configuration.randomForestPath)
-      )
+        DaoUtils.loadFromLocalObject[Model[LogisticRegressionModel]](configuration.logisticRegPath).get,
+    DaoUtils.loadFromLocalObject[Model[NaiveBayesModel]](configuration.naiveBayesPath).get,
+    DaoUtils.loadFromLocalObject[Model[DecisionTreeModel]](configuration.decisionTreePath).get,
+    DaoUtils.loadFromLocalObject[Model[RandomForestModel]](configuration.randomForestPath).get
+    )
+//      List(
+//        LogisticRegressionModel.load(sc, configuration.logisticRegPath),
+//        NaiveBayesModel.load(sc, configuration.naiveBayesPath),
+//        DecisionTreeModel.load(sc, configuration.decisionTreePath),
+//        RandomForestModel.load(sc, configuration.randomForestPath)
+//      )
+
 
     // Load the metrics so we can produce nice prediction data beans
     val metrics = models.map(model => (model.name -> loadMetrix(model))).toMap
@@ -101,7 +108,7 @@ object BuildPredictions extends SparkRunner {
 
     // This is one way to do it, probably not the best one
     // TODO: Find a better way of persisting/exporting the results
-    val success = DaoUtils.toJsonFile(predictedRecipes.collect, configuration.outputPredictionsPath)
+    val success = DaoUtils.saveAsLocalJsonFile(predictedRecipes.collect, configuration.outputPredictionsPath)
     println(s"""The results were saved to "${configuration.outputPredictionsPath}". ${if(success) "No errors" else "Errors"}""")
   }
 

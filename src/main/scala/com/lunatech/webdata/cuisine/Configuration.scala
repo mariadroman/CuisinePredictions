@@ -23,13 +23,13 @@ case class Configuration(args: Array[String]) {
 
   private val trainingDataRoot = s"$modelRootPath/training/"
 
-  val naiveBayesPath = trainingDataRoot + "naive_bayes"
+  val naiveBayesPath = trainingDataRoot + "naive_bayes.model"
 
-  val logisticRegPath = trainingDataRoot + "logistic_regression"
+  val logisticRegPath = trainingDataRoot + "logistic_regression.model"
 
-  val decisionTreePath = trainingDataRoot + "decision_tree"
+  val decisionTreePath = trainingDataRoot + "decision_tree.model"
 
-  val randomForestPath = trainingDataRoot + "random_forest"
+  val randomForestPath = trainingDataRoot + "random_forest.model"
 
 
 }
