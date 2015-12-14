@@ -124,7 +124,7 @@ object BuildPredictions extends SparkRunner {
       ("| Prec   | Precision (TP / LC)     |") ::
       ("| cls    | Class (label)           |") ::
       Nil
-    println(legend)
+    println(legend.mkString("\n"))
   }
 
 }
