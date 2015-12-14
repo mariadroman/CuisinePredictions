@@ -91,25 +91,40 @@ object BuildPredictions extends SparkRunner {
       PredictedRecipe(recipeId, ingredients, predictionData)
     }
 
-
     // Print some results
-    predictedRecipes.take(20).foreach { p =>
-      println(
-        s"Recipe Id: ${p.id}")
-      println("  Ingredients:")
-      p.ingredients.foreach(i => println(s"  - ${i}"))
-      println("  Predictions and class specific metrics:")
-      println(f"  | ${"Model Name"}%-30s | ${"Prediction"}%-30s | ${"Prec/cls"}%-8s | ${"TPR/cls"}%-8s | ${"FPR/cls"}%-8s")
-      p.predictions.foreach ( p =>
-        println(f"  | ${p.model}%-30s | ${p.prediction}%-30s | ${p.metrics.precision * 100}%7.4f%% | ${p.metrics.truePositiveRate * 100}%7.4f%% | ${p.metrics.falsePositiveRate * 100}%7.4f%%")
-      )
+    predictedRecipes.take(20).foreach ( printPrediction )
+    printPredictionLegend
 
-    }
 
     // This is one way to do it, probably not the best one
     // TODO: Find a better way of persisting/exporting the results
     val success = DaoUtils.saveAsLocalJsonFile(predictedRecipes.collect, configuration.outputPredictionsPath)
     println(s"""The results were saved to "${configuration.outputPredictionsPath}". ${if(success) "No errors" else "Errors"}""")
+  }
+
+
+  def printPrediction(p: PredictedRecipe): Unit = {
+
+    println(s"Recipe Id: ${p.id}")
+    println( "  Ingredients:")
+    p.ingredients.foreach(i => println(s"  - ${i}"))
+    println( "  Predictions and class specific metrics:")
+    println(f"  | ${"Model Name"}%-30s | ${"Prediction"}%-30s | ${"Prec/cls"}%-8s | ${"TPR/cls"}%-8s | ${"FPR/cls"}%-8s")
+    p.predictions.foreach ( p =>
+      println(f"  | ${p.model}%-30s | ${p.prediction}%-30s | ${p.metrics.precision * 100}%7.4f%% | ${p.metrics.truePositiveRate * 100}%7.4f%% | ${p.metrics.falsePositiveRate * 100}%7.4f%%")
+    )
+  }
+
+  def printPredictionLegend(): Unit = {
+    val legend = "" ::
+      ("| Legend ||") ::
+      ("| ------ | ----------------------- |") ::
+      ("| TPR    | True Positive Rate      |") ::
+      ("| FPR    | False Positive Rate     |") ::
+      ("| Prec   | Precision (TP / LC)     |") ::
+      ("| cls    | Class (label)           |") ::
+      Nil
+    println(legend)
   }
 
 }
