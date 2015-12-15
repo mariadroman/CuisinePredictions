@@ -13,7 +13,7 @@ case class Configuration(args: Array[String]) {
   
   val inputTestingData = argsMap.getOrElse("app.input.file.test", "data/cuisines/test.json")
 
-  val outputPredictionsPath = argsMap.getOrElse("app.output.file.predictions", "data/cuisines/predictions.json")
+  val outputPredictionsPath = argsMap.getOrElse("app.output.file.predictions", "/tmp/predictions")
   
   private val modelRootPath = argsMap.getOrElse("app.model.dir", "working_model")
 
@@ -31,6 +31,12 @@ case class Configuration(args: Array[String]) {
 
   val randomForestPath = trainingDataRoot + "random_forest.model"
 
+
+  val es_index_auto_create = argsMap.getOrElse("es.index.auto.create", "true")
+
+  val es_nodes = argsMap.getOrElse("es.nodes","localhost")
+
+  val es_port = argsMap.getOrElse("es.port","9200")
 
 }
 

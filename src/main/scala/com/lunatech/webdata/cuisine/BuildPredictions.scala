@@ -1,12 +1,12 @@
 package com.lunatech.webdata.cuisine
 
+import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine.mllib.{FlowData, Model}
 import com.lunatech.webdata.cuisine.model.{PredictedRecipe, PredictionData}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, NaiveBayesModel}
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 import org.apache.spark.{SparkConf, SparkContext}
-import com.lunatech.webdata._
 
 /**
  * An example of following through the process from data import to predictions.
@@ -92,11 +92,10 @@ object BuildPredictions extends SparkRunner {
     predictedRecipes.take(20).foreach ( printPrediction )
     printPredictionLegend
 
-
     // This is one way to do it, probably not the best one
     // TODO: Find a better way of persisting/exporting the results
     removeHdfsFile(configuration.outputPredictionsPath)
-    predictedRecipes.saveAsTextFile(configuration.outputPredictionsPath)
+    predictedRecipes.saveAsObjectFile(configuration.outputPredictionsPath)
   }
 
 

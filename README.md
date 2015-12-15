@@ -33,7 +33,7 @@ Some information about the currently generated models can be found [here](./docs
 
 ### Running
 - ssh the machine where you are running `spark-submit`
-- run the entire app with something like
+- run almost the entire app with something like (it does not run the export to elastic seach)
 
 ```
 spark-submit --class "com.lunatech.webdata.cuisine.MainMlLib"
@@ -42,14 +42,15 @@ spark-submit --class "com.lunatech.webdata.cuisine.MainMlLib"
   /tmp/cuisine-predictions-fat.jar \
   app.input.file.training=hdfs://192.168.100.10/user/spark/train.json \
   app.input.file.test=hdfs://192.168.100.10/user/spark/test.json \
-  app.output.file.predictions=hdfs://192.168.100.10/user/spark/predictions.json \
-  app.model.dir=hdfs://192.168.100.10/user/spark/working_data
+  app.model.dir=hdfs://192.168.100.10/user/spark/working_data \
+  app.output.file.predictions=hdfs://192.168.100.10/user/spark/predictions
 ```
 
 - other options for class are: 
   - `com.lunatech.webdata.cuisine.ImportData`
   - `com.lunatech.webdata.cuisine.BuildModels`
   - `com.lunatech.webdata.cuisine.BuildPredictions`
+  - `com.lunatech.webdata.cuisine.ExportToES` useful for exporting the predictions to ES
 
 ## Design notes
 
@@ -76,7 +77,7 @@ spark-submit --class "com.lunatech.webdata.cuisine.MainMlLib"
 - [x] Add shell scripts for convenience
 - [x] Save prediction results as json (easy to sent to ElasticSearch)
 - [ ] Fix the ChiSqSelectorTransformer
-- [ ] Test in cluster environment
+- [x] Test in cluster environment
 - [ ] Research spark unit testing
 - [ ] Add unit tests
 - [ ] Add trainer configuration and pass it from the running scripts as arguments

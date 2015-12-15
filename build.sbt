@@ -12,6 +12,8 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.5.2"
 
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "1.5.2"
 
+libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark" % "2.1.0"
+
 assemblyJarName in assembly := s"${name.value}-fat.jar"
 
 // Add exclusions, provided...

@@ -27,6 +27,12 @@ export JAR_FILE="/tmp/cuisine-predictions-fat.jar"
 export SPARK_DRIVER_MEMORY=1g
 #
 export SPARK_EXECUTOR_MEMORY=1g
+# Elastic search auto create
+export ES_INDEX_AUTO_CREATE=true
+# Elastic Search host
+export ES_NODES=localhost
+# Elastic Search port
+export ES_PORT=9200
 
 
 # # Uncomment the following to run locally from the scripts directory
