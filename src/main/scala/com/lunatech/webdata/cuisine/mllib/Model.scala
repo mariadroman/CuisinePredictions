@@ -1,21 +1,26 @@
 package com.lunatech.webdata.cuisine.mllib
 
-import com.lunatech.webdata.cuisine.{Configuration, DaoUtils}
+import com.lunatech.webdata._
+import com.lunatech.webdata.cuisine.Configuration
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.classification.{NaiveBayesModel, LogisticRegressionModel}
-import org.apache.spark.mllib.tree.model.{RandomForestModel, DecisionTreeModel}
-import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, NaiveBayesModel}
 import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
+import org.apache.spark.rdd.RDD
 
 /**
-  * Interface unification for the MLLib models
-  * @tparam T
-  */
+ * Interface unification for the MLLib models
+ * @tparam T
+ */
 trait Model[T] extends Serializable {
   def self: T
-  def predict(testData: Vector) : Double
-  def predict(testData: RDD[Vector]) : RDD[Double]
+
+  def predict(testData: Vector): Double
+
+  def predict(testData: RDD[Vector]): RDD[Double]
+
   def save(path: String)(implicit sc: SparkContext, configuration: Configuration): Unit
+
   def name = self.getClass.getSimpleName
 }
 
@@ -34,9 +39,10 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
-      //        originalModel.save(sc, path)
-        DaoUtils.saveModel(this)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) = {
+        removeHdfsFile(path)
+        originalModel.save(sc, path)
+      }
     }
 
   implicit def naiveBayesModelToModel(originalModel: NaiveBayesModel) =
@@ -51,11 +57,11 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
-      //        originalModel.save(sc, path)
-        DaoUtils.saveModel(this)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) = {
+        removeHdfsFile(path)
+        originalModel.save(sc, path)
+      }
     }
-
 
 
   implicit def decisionTreeModelToModel(originalModel: DecisionTreeModel) =
@@ -70,9 +76,10 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
-//        originalModel.save(sc, path)
-        DaoUtils.saveModel(this)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) = {
+        removeHdfsFile(path)
+        originalModel.save(sc, path)
+      }
     }
 
 
@@ -88,9 +95,10 @@ object Model {
         originalModel.predict(testData)
       }
 
-      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) =
-      //        originalModel.save(sc, path)
-        DaoUtils.saveModel(this)
+      def save(path: String)(implicit sc: SparkContext, configuration: Configuration) = {
+        removeHdfsFile(path)
+        originalModel.save(sc, path)
+      }
     }
 }
 

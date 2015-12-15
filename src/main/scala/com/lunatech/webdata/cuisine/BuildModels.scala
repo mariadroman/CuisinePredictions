@@ -1,5 +1,6 @@
 package com.lunatech.webdata.cuisine
 
+import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine.mllib.trainers._
 import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, FlowData, Model}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -12,7 +13,7 @@ object BuildModels extends SparkRunner {
   def main(args: Array[String]) = {
 
     val defConf = new SparkConf(true)
-    val conf = defConf.setAppName("CuisineRecipesImportData").
+    val conf = defConf.setAppName("CuisineRecipesBuildModels").
       setMaster(defConf.get("spark.master",  "local[*]"))
 
     implicit val sc = new SparkContext(conf)
@@ -40,7 +41,9 @@ object BuildModels extends SparkRunner {
 
     // Train the models and save the models for later use
     trainingResults.map { case (model, metrics) =>
-      saveModel(model)
+        val path = DaoUtils.getPath(model)
+        removeHdfsFile(path)
+        model.save(path)
     }
 
     // Print the models evaluation (GitHub friendly)

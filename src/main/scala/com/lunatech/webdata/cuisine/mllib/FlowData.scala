@@ -1,8 +1,9 @@
 package com.lunatech.webdata.cuisine.mllib
 
-import com.lunatech.webdata.cuisine.DaoUtils
+import com.lunatech.webdata._
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.rdd.RDD
 
 /** s
@@ -28,17 +29,14 @@ case class FlowData(data: RDD[LabeledPoint],
   // TODO FlowData DAO should be transparent (e.g. dealt with by third party)
   def save(rootPath: String)(implicit sc: SparkContext) = {
 
-//    removeHdfsFile(rootPath + dataDir)
-//    data.saveAsTextFile(rootPath + dataDir)
-    DaoUtils.saveAsLocalObject(data.collect(), rootPath + dataDir)
+    removeHdfsFile(rootPath + dataDir)
+    data.saveAsTextFile(rootPath + dataDir)
 
-//    removeHdfsFile(rootPath + labelsDir)
-//    DaoUtils.toJsonFile(labelToIndex, rootPath + labelsDir)
-    DaoUtils.saveAsLocalObject(labelToIndex, rootPath + labelsDir)
+    removeHdfsFile(rootPath + labelsDir)
+    sc.parallelize(labelToIndex.toSeq).saveAsObjectFile(rootPath + labelsDir)
 
-//    removeHdfsFile(rootPath + featuresDir)
-//    DaoUtils.toJsonFile(featureToIndex, rootPath + featuresDir)
-    DaoUtils.saveAsLocalObject(featureToIndex, rootPath + featuresDir)
+    removeHdfsFile(rootPath + featuresDir)
+    sc.parallelize(featureToIndex.toSeq).saveAsObjectFile(rootPath + featuresDir)
 
   }
 
@@ -61,15 +59,10 @@ object FlowData {
 
   // TODO FlowData DAO should be transparent (e.g. dealt with by third party)
   def load(rootPath: String)(implicit sc: SparkContext): FlowData = {
-//    FlowData(
-//      MLUtils.loadLabeledPoints(sc, rootPath + dataDir),
-//      sc.objectFile[(String, Int)](rootPath + labelsDir).collect().toMap,
-//      sc.objectFile[(String, Int)](rootPath + featuresDir).collect().toMap
-//    )
     FlowData(
-      sc.parallelize(DaoUtils.loadFromLocalObject[Array[LabeledPoint]](rootPath + dataDir).get),
-      DaoUtils.loadFromLocalObject[Map[String, Int]](rootPath + labelsDir).get,
-      DaoUtils.loadFromLocalObject[Map[String, Int]](rootPath + featuresDir).get
+      MLUtils.loadLabeledPoints(sc, rootPath + dataDir),
+      sc.objectFile[(String, Int)](rootPath + labelsDir).collect().toMap,
+      sc.objectFile[(String, Int)](rootPath + featuresDir).collect().toMap
     )
   }
 

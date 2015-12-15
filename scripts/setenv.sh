@@ -7,12 +7,12 @@
 ####################
 
 
-export SPARK_MASTER_URL="spark://192.168.200.10:7077"
+export SPARK_MASTER_URL=yarn-cluster
 #
-export SPARK_DRIVER_HOST=192.168.200.1
+# export SPARK_DRIVER_HOST=192.168.200.1
 # Where are all the necessary files? This path should be accessible by all spark nodes
 # !!! Make sure all nodes have
-export ROOT_DIR=/tmp/shared
+export ROOT_DIR="hdfs://192.168.100.10/user/spark"
 # Training data input json file
 export APP_INPUT_FILE_TRAINING="$ROOT_DIR/data/cuisines/train.json"
 # Testing data inout json file
@@ -22,7 +22,7 @@ export APP_OUTPUT_FILE_PREDICTIONS="$ROOT_DIR/predictions.json"
 # Where to store partial data (like training data and meta-data)
 export APP_MODEL_DIR="$ROOT_DIR/working_model"
 # The location of the fat-jar for the application (run `sbt assembly` to create it)
-export JAR_FILE="$ROOT_DIR/cuisine-predictions-fat.jar"
+export JAR_FILE="/tmp/cuisine-predictions-fat.jar"
 #
 export SPARK_DRIVER_MEMORY=1g
 #

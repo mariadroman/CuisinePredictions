@@ -6,6 +6,7 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, NaiveBaye
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 import org.apache.spark.{SparkConf, SparkContext}
+import com.lunatech.webdata._
 
 /**
  * An example of following through the process from data import to predictions.
@@ -18,7 +19,7 @@ object BuildPredictions extends SparkRunner {
   def main(args: Array[String]) = {
 
     val defConf = new SparkConf(true)
-    val conf = defConf.setAppName("CuisineRecipesImportData").
+    val conf = defConf.setAppName("CuisineRecipesBuildPredictions").
       setMaster(defConf.get("spark.master",  "local[*]"))
 
     implicit val sc = new SparkContext(conf)
@@ -51,21 +52,17 @@ object BuildPredictions extends SparkRunner {
     // Set the models are we using for predictions
     val models: List[Model[_]] =
       List(
-        DaoUtils.loadFromLocalObject[Model[LogisticRegressionModel]](configuration.logisticRegPath).get,
-    DaoUtils.loadFromLocalObject[Model[NaiveBayesModel]](configuration.naiveBayesPath).get,
-    DaoUtils.loadFromLocalObject[Model[DecisionTreeModel]](configuration.decisionTreePath).get,
-    DaoUtils.loadFromLocalObject[Model[RandomForestModel]](configuration.randomForestPath).get
-    )
-//      List(
-//        LogisticRegressionModel.load(sc, configuration.logisticRegPath),
-//        NaiveBayesModel.load(sc, configuration.naiveBayesPath),
-//        DecisionTreeModel.load(sc, configuration.decisionTreePath),
-//        RandomForestModel.load(sc, configuration.randomForestPath)
-//      )
+        LogisticRegressionModel.load(sc, configuration.logisticRegPath),
+        NaiveBayesModel.load(sc, configuration.naiveBayesPath),
+        DecisionTreeModel.load(sc, configuration.decisionTreePath),
+        RandomForestModel.load(sc, configuration.randomForestPath)
+      )
 
 
     // Load the metrics so we can produce nice prediction data beans
-    val metrics = models.map(model => (model.name -> loadMetrix(model))).toMap
+    // TODO: loadMetrix() returns option, maybe this should be fixed;
+    // TODO: probably PredictionData should take an option for metrics
+    val metrics = models.map(model => (model.name -> loadMetrix(model).get)).toMap
 
     // Prepare the data to be predicted
     val predictionData = testData.map { case (recipeId, featuresVector) =>
@@ -84,7 +81,7 @@ object BuildPredictions extends SparkRunner {
       val predictionData = predictions.map{p =>
         val modelName = p._1
         val predictedCuisine = flowData.indexToLabel(p._2.toInt)
-        val classMetrics = metrics(modelName).get.metricsByLabel(predictedCuisine)
+        val classMetrics = metrics(modelName).metricsByLabel(predictedCuisine)
         PredictionData(modelName, predictedCuisine, classMetrics)
       }.toSeq //HR as in Human Readable
 
@@ -98,8 +95,8 @@ object BuildPredictions extends SparkRunner {
 
     // This is one way to do it, probably not the best one
     // TODO: Find a better way of persisting/exporting the results
-    val success = DaoUtils.saveAsLocalJsonFile(predictedRecipes.collect, configuration.outputPredictionsPath)
-    println(s"""The results were saved to "${configuration.outputPredictionsPath}". ${if(success) "No errors" else "Errors"}""")
+    removeHdfsFile(configuration.outputPredictionsPath)
+    predictedRecipes.saveAsTextFile(configuration.outputPredictionsPath)
   }
 
 

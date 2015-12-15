@@ -1,5 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib.trainers
 
+import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.mllib.FlowData
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
@@ -37,9 +38,8 @@ object NaiveBayesTrainer {
 
     val (model, metrics) = NaiveBayesTrainer().trainEvaluate(flowData)
 
-    //    removeHdfsFile(configuration.naiveBayesPath)
-    //    model.save(configuration.naiveBayesPath)
-    DaoUtils.saveModel(model)
+    removeHdfsFile(configuration.decisionTreePath)
+    model.save(configuration.decisionTreePath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

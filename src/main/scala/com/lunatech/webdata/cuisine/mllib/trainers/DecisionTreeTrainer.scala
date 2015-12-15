@@ -1,5 +1,6 @@
 package com.lunatech.webdata.cuisine.mllib.trainers
 
+import com.lunatech.webdata._
 import com.lunatech.webdata.cuisine._
 import com.lunatech.webdata.cuisine.mllib.{FlowData, Model}
 import org.apache.spark.mllib.tree.DecisionTree
@@ -49,9 +50,8 @@ object DecisionTreeTrainer {
 
     val (model, metrics) = DecisionTreeTrainer().trainEvaluate(flowData)
 
-    //    removeHdfsFile(configuration.decisionTreePath)
-    //    model.save(configuration.decisionTreePath)
-    DaoUtils.saveModel(model)
+    removeHdfsFile(configuration.decisionTreePath)
+    model.save(configuration.decisionTreePath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

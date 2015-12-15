@@ -55,9 +55,8 @@ object RandomForestTrainer {
 
     val (model, metrics) = RandomForestTrainer().trainEvaluate(flowData)
 
-    removeHdfsFile(configuration.randomForestPath)
-    //    model.save(configuration.randomForestPath)
-    DaoUtils.saveModel(model)
+    removeHdfsFile(configuration.decisionTreePath)
+    model.save(configuration.decisionTreePath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 
