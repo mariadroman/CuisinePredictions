@@ -7,13 +7,13 @@ import org.apache.spark.mllib.regression.LabeledPoint
 /**
  *
  */
-case class ChiSqSelectorTransformer(topFeatures: Double) extends Transformer {
+case class ChiSqSelectorTransformer(topFeaturesRatio: Double) extends Transformer[FlowData] {
 
-  require(topFeatures < 1.0 && topFeatures > 0)
+  require(topFeaturesRatio < 1.0 && topFeaturesRatio > 0)
 
   override def transform(flowData: FlowData): FlowData = {
 
-    val numTopFeatures = (flowData.indexToFeature.size * topFeatures).toInt
+    val numTopFeatures = (flowData.indexToFeature.size * topFeaturesRatio).toInt
 
     // Create ChiSqSelector that will select top numTopFeatures features
     val selector = new ChiSqSelector(numTopFeatures)

@@ -38,8 +38,8 @@ object NaiveBayesTrainer {
 
     val (model, metrics) = NaiveBayesTrainer().trainEvaluate(flowData)
 
-    removeHdfsFile(configuration.decisionTreePath)
-    model.save(configuration.decisionTreePath)
+    removeHdfsFile(configuration.naiveBayesPath)
+    model.save(configuration.naiveBayesPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

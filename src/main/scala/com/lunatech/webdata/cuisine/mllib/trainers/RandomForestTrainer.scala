@@ -55,8 +55,8 @@ object RandomForestTrainer {
 
     val (model, metrics) = RandomForestTrainer().trainEvaluate(flowData)
 
-    removeHdfsFile(configuration.decisionTreePath)
-    model.save(configuration.decisionTreePath)
+    removeHdfsFile(configuration.randomForestPath)
+    model.save(configuration.randomForestPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

@@ -6,8 +6,8 @@ import com.lunatech.webdata.cuisine.mllib.FlowData
  * Interface for transforming flow data (e.g. filtering, sorting,
  * applying smart algorithms on it...)
  */
-trait Transformer {
+trait Transformer[T] {
 
-  def transform(flowData: FlowData): FlowData
+  def transform(input: T): FlowData
 
 }

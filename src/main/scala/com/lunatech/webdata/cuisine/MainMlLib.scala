@@ -21,7 +21,7 @@ object MainMlLib {
 
   def run(implicit sc: SparkContext, configuration: Configuration) = {
 
-    val runners = List(ImportData, BuildModels, BuildPredictions)
+    val runners = List(ImportData, BuildModels, BuildPredictions, ExportToCSV)
 
     runners.foreach(_.run)
   }

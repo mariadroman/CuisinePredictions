@@ -1,6 +1,6 @@
 package com.lunatech.webdata.cuisine
 
-import com.lunatech.webdata.cuisine.mllib.TrainingDataImporter
+import com.lunatech.webdata.cuisine.mllib.transformers.TrainingDataImporter
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -24,11 +24,14 @@ object ImportData extends SparkRunner {
 
   def run(implicit sc: SparkContext, configuration: Configuration) = {
 
-    // Import the data and process it
+
+    // import the recipes
+    val recipes = RecipesImporter.importFrom(configuration.inputTrainingData)
+
+    // Transform the recipes into training data
     val flowData = TrainingDataImporter
-      .importFrom(configuration.inputTrainingData)
-    // TODO: Fix the transformation
-    //      .map(ChiSqSelectorTransformer(0.8).transform)
+      .transform(recipes)
+//      .map(ChiSqSelectorTransformer(0.8).transform)
 
     // Store the flow data for later processing
     flowData.save(configuration.dataPath)

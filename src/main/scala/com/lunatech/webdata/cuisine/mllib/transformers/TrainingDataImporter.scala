@@ -1,18 +1,18 @@
-package com.lunatech.webdata.cuisine.mllib
+package com.lunatech.webdata.cuisine.mllib.transformers
 
-import com.lunatech.webdata.cuisine.{Configuration, RecipesImporter}
-import org.apache.spark.SparkContext
+import com.lunatech.webdata.cuisine.mllib.FlowData
+import com.lunatech.webdata.cuisine.model.Recipe
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.rdd.RDD
 
 /**
   * Read data from a json file, parse it, transform it into a bag of recipes and produce a FlowData object
   */
-object TrainingDataImporter {
+object TrainingDataImporter extends Transformer[RDD[Recipe]] {
 
-   def importFrom(inputFilePath: String)(implicit sc: SparkContext, configuration: Configuration): FlowData = {
+   def transform(recipes: RDD[Recipe]): FlowData = {
 
-     val recipes = RecipesImporter.importFrom(inputFilePath)
 
      // Normally we should keep this an RDD, but we have a small list here
      val cuisines = recipes.map(r => r.cuisine)

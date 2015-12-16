@@ -105,9 +105,10 @@ object BuildPredictions extends SparkRunner {
     println( "  Ingredients:")
     p.ingredients.foreach(i => println(s"  - ${i}"))
     println( "  Predictions and class specific metrics:")
-    println(f"  | ${"Model Name"}%-30s | ${"Prediction"}%-30s | ${"Prec/cls"}%-8s | ${"TPR/cls"}%-8s | ${"FPR/cls"}%-8s")
+    println(f"  | ${"Model Name"}%-30s | ${"Prediction"}%-30s | ${"Prec/cls"}%-8s | ${"TPR/cls"}%-8s | ${"FPR/cls"}%-8s |")
+    println( "  | -------------------- | -------------------- | -------- | -------- | --------")
     p.predictions.foreach ( p =>
-      println(f"  | ${p.model}%-30s | ${p.prediction}%-30s | ${p.metrics.precision * 100}%7.4f%% | ${p.metrics.truePositiveRate * 100}%7.4f%% | ${p.metrics.falsePositiveRate * 100}%7.4f%%")
+      println(f"  | ${p.model}%-30s | ${p.prediction}%-30s | ${p.metrics.precision * 100}%7.4f%% | ${p.metrics.truePositiveRate * 100}%7.4f%% | ${p.metrics.falsePositiveRate * 100}%7.4f%% |")
     )
   }
 

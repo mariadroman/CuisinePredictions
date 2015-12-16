@@ -40,8 +40,8 @@ object LogisticRegressionTrainer {
 
     val (model, metrics) = LogisticRegressionTrainer().trainEvaluate(flowData)
 
-    removeHdfsFile(configuration.decisionTreePath)
-    model.save(configuration.decisionTreePath)
+    removeHdfsFile(configuration.logisticRegPath)
+    model.save(configuration.logisticRegPath)
 
     println(s"### ${model.self.getClass.getSimpleName} model evaluation")
 

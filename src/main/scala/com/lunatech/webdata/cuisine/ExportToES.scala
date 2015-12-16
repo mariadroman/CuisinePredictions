@@ -1,7 +1,7 @@
 package com.lunatech.webdata.cuisine
 
 import com.lunatech.webdata.cuisine.DaoUtils._
-import com.lunatech.webdata.cuisine.mllib.Model
+import com.lunatech.webdata.cuisine.mllib.{MulticlassMetrix, ClassMetrics, Model}
 import com.lunatech.webdata.cuisine.model.PredictedRecipe
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, NaiveBayesModel}
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
@@ -11,7 +11,7 @@ import org.elasticsearch.spark.rdd.EsSpark
 /**
  *
  */
-object ExportToES {
+object ExportToES extends SparkRunner {
 
   def main(args: Array[String]) = {
 
@@ -40,15 +40,26 @@ object ExportToES {
         DecisionTreeModel.load(sc, configuration.decisionTreePath),
         RandomForestModel.load(sc, configuration.randomForestPath)
       )
-    val metrics = sc.parallelize(models.map(model => (model.name -> loadMetrix(model).get)))
+    case class ModelMetrics(name: String, metrics: MulticlassMetrix)
+    val metrics = sc.parallelize(models.map(model => ModelMetrics(model.name, loadMetrix(model).get)))
 
     EsSpark.saveToEs(metrics,"cuisines/metrics")
 
-    // Export the predictions to ES
+    // Export the predictions to ES, one record / recipe
     val predictions = sc.objectFile[PredictedRecipe](configuration.outputPredictionsPath)
 
-    EsSpark.saveToEs(predictions,"cuisines/predictions")
+    EsSpark.saveToEs(predictions,"cuisines/predictions_raw")
 
+    // Export predictions to ES flattened, one record / recipe / model
+    case class Prediction(id: Int, ingredients: Seq[String], model: String, prediction: String, metrics: ClassMetrics)
+
+    val exportPredictions = predictions.flatMap { pred =>
+      pred.predictions.map{ p =>
+        Prediction(pred.id, pred.ingredients, p.model, p.prediction, p.metrics)
+      }
+    }
+
+    EsSpark.saveToEs(exportPredictions,"cuisines/predictions")
 
   }
 }
