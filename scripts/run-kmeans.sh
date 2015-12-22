@@ -14,13 +14,18 @@ rundir="`dirname "$0"`"
 rundir="`cd "$rundir"; pwd`"
 . "$rundir"/setenv.sh
 
+export SPARK_DRIVER_MEMORY=4g
+#
+export SPARK_EXECUTOR_MEMORY=3g
+#
+export SPARK_MASTER_URL="local[*]"
 
 # RUN SECTION
 #############
 
 spark-submit \
-  --class "com.lunatech.webdata.cuisine.MainMlLib" \
-  --name "CuisineDataPrediction" \
+  --class "com.lunatic.mlx.kddcup99.TrainKMeans" \
+  --name "TrainKMeans" \
   --master $SPARK_MASTER_URL \
   --num-executors $YARN_EXECUTORS \
   --conf spark.task.maxFailures=20 \

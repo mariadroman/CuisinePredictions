@@ -1,4 +1,4 @@
-name := "cuisine-predictions"
+name := "machine-learning"
 
 version := "0.1.0"
 
@@ -12,7 +12,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.5.2"
 
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "1.5.2"
 
-libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark" % "2.1.0"
+libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark" % "2.2.0-m1"
 
 assemblyJarName in assembly := s"${name.value}-fat.jar"
 
