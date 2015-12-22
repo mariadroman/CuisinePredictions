@@ -8,7 +8,7 @@
   - epsilon: 1E-4
   
 | K   | WSSSE         |  R/T  | Params          |
-| --: | ------------: | ----- | --------------- |
+| --: | ------------: | ----: | --------------- |
 |  12 | 2.90919384E15 | 05:47 |                 |
 |  24 | 1.13961952E14 | 13:47 |                 |
 |  24 | 1.12248556E14 | 14:34 | Iteration = 500 |
@@ -28,7 +28,7 @@ Conclusion: The accuracy seems to become stable for a K around 180
   - epsilon: 1E-15
   
 | K   | WSSSE         |  R/T   | Params          |
-| --: | ------------: | ------ | --------------- |
+| --: | ------------: | -----: | --------------- |
 |  46 | 1.4263779E+04 |  50:34 |                 |
 |  92 | 7.8956542E+03 |  60:20 |                 |
 | 115 | 6.5707596E+03 | 291:54 |                 |
@@ -2357,4 +2357,4 @@ Conclusion: The accuracy seems to become stable for a K around 160
 | Clust  | Cluster Id                       |
 
 
-[Home](../README.md)
+[Back](kddcup.md)

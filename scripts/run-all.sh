@@ -19,9 +19,10 @@ rundir="`cd "$rundir"; pwd`"
 #############
 
 spark-submit \
-  --class "com.lunatech.webdata.cuisine.MainMlLib" \
+  --class "com.lunatic.mlx.cuisines.MainMlLib" \
   --name "CuisineDataPrediction" \
   --master $SPARK_MASTER_URL \
+  --num-executors $YARN_EXECUTORS \
   --conf spark.task.maxFailures=20 \
   --conf spark.driver.memory=$SPARK_DRIVER_MEMORY \
   --conf spark.executor.memory=$SPARK_EXECUTOR_MEMORY \

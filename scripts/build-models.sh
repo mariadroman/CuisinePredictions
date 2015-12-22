@@ -24,9 +24,10 @@ rundir="`cd "$rundir"; pwd`"
 #############
 
 spark-submit \
-  --class "com.lunatech.webdata.cuisine.BuildModels" \
+  --class "com.lunatic.mlx.cuisines.BuildModels" \
   --name "CuisineDataModelBuilding" \
   --master $SPARK_MASTER_URL \
+  --num-executors $YARN_EXECUTORS \
   --conf spark.driver.host=$SPARK_DRIVER_HOST \
   --conf spark.task.maxFailures=20 \
   --conf spark.driver.memory=$SPARK_DRIVER_MEMORY \
