@@ -11,18 +11,20 @@ import org.apache.spark.rdd.RDD
  */
 object ImportData extends SparkRunnable {
 
+  // TODO: extract the input data transformation into a different class
+  // TODO: save the transformation parameters to restore the transformers
+
   // No normalization; return original data
-  val NoNorm = "NoNorm"
+  val L0Norm = "L0Norm"
   // L2Norm applied on each row
   val L2NormRow = "L2NormRow"
   // L1Norm applied by column, using MultivariateStatisticalSummary
-  val L1NormColV1 = "L1NormColV1"
+  val L1Norm = "L1Norm"
   // L2Norm applied by column, using MultivariateStatisticalSummary
-  val L2NormColV1 = "L2NormColV1"
+  val L2NormV1 = "L2NormV1"
   // L2Norm own algorithm applied by column
-  val L2NormColV2 = "L2NormColV2"
+  val L2NormV2 = "L2NormV2"
 
-  val NORMALIZER = L2NormColV2
 
   def main(args: Array[String]) = {
 
@@ -32,17 +34,24 @@ object ImportData extends SparkRunnable {
 
   def run(implicit sc: SparkContext, appConf: Configuration) = {
 
-    val (labeledData, labelsCount) = importNormalize
+    val norms = List(  ImportData.L0Norm, ImportData.L1Norm, ImportData.L2NormV1, ImportData.L2NormV2)
 
-    com.lunatic.mlx.removeHdfsFile(appConf.normDataPath + NORMALIZER)
-    labeledData.saveAsObjectFile(appConf.normDataPath + NORMALIZER)
+    norms.foreach { normalizer =>
+      val (labeledData, labelsCount) = importNormalize(normalizer)
 
-    com.lunatic.mlx.removeHdfsFile(appConf.labelsCountPath)
-    sc.parallelize(labelsCount.toSeq).saveAsObjectFile(appConf.labelsCountPath)
+      com.lunatic.mlx.removeHdfsFile(appConf.normDataPath + normalizer)
+      labeledData.saveAsObjectFile(appConf.normDataPath + normalizer)
+
+      com.lunatic.mlx.removeHdfsFile(appConf.labelsCountPath)
+      sc.parallelize(labelsCount.toSeq).saveAsObjectFile(appConf.labelsCountPath)
+
+      println("Sleeping... (cooling of my CPU)")
+      Thread.sleep(60000)
+    }
 
   }
 
-  def importNormalize(implicit sc: SparkContext, appConf: Configuration) : (RDD[(String, Vector)], Map[String, Long]) = {
+  def importNormalize(normalizer: String)(implicit sc: SparkContext, appConf: Configuration) : (RDD[(String, Vector)], Map[String, Long]) = {
 
     val lines = sc.textFile(appConf.inputTrainingData).map(_.split(","))
 
@@ -92,7 +101,7 @@ object ImportData extends SparkRunnable {
 
     val rawVectors = rawFilteredData.map(v => Vectors.dense(v))
 
-    val vectors = normalize(rawVectors, L2NormColV1)
+    val vectors = normalize(rawVectors, normalizer)
 
     val labeledData: RDD[(String, Vector)] = labels.zip(vectors)
 
@@ -104,11 +113,11 @@ object ImportData extends SparkRunnable {
   }
 
   def normalize(data: RDD[Vector], algo: String): RDD[Vector] = algo match {
-    case NoNorm => data
+    case L0Norm => data
     case L2NormRow => new Normalizer().transform(data)
-    case L1NormColV1 => normalizeColumnsL2(data)
-    case L2NormColV1 => normalizeColumnsL2(data)
-    case L2NormColV2 => rawNormalizeColumnsL2(data)
+    case L1Norm   => normalizeColumnsL1(data)
+    case L2NormV1 => normalizeColumnsL2(data)
+    case L2NormV2 => rawNormalizeColumnsL2(data)
   }
 
   /**

@@ -33,9 +33,6 @@ object InputDataAnalysis extends SparkRunnable {
       .getLines
       .map(_.split(":")).map(arr => (arr(0).trim, arr(1).trim == "continuous."))
 
-    colTypes.foreach(x => println(s"${x._1}  ${x._2}"))
-    println(colTypes.size)
-
     val colsDict = colTypes.map(_._1).zipWithIndex.map(_.swap).toMap
 
     val distinctCountByColumn = (0 until lines.first.size).
