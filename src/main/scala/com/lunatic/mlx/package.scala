@@ -32,4 +32,9 @@ package object mlx {
     (result, runtime)
   }
 
+  def coolMyCPU(seconds: Int) = {
+    println(s"Sleeping for $seconds seconds... (cooling of my CPU)")
+    Thread.sleep(seconds * 1000)
+  }
+
 }
