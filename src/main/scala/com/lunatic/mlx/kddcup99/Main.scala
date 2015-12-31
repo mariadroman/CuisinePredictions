@@ -8,9 +8,9 @@ object Main {
   def main(args: Array[String]) = {
 
     val tasks = List(
-//      AnalyseInputData,
+      AnalyseInputData,
       EducateTransformers,
-//      SplitTrainingData,
+      SplitTrainingData,
       NormalizeTrainingData,
       TrainKMeans,
       PredictKMeans)

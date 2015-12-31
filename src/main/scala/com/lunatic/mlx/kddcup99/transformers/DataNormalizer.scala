@@ -8,6 +8,8 @@ import org.apache.spark.rdd.RDD
 
 /**
   * Normalize the data given a normalization algorithm.
+  *
+  * Ideally this should be an isomorphic transformer (@see IsoTransformer).
   */
 case class DataNormalizer(normalizer: String, mvss: Option[MVSS])
   extends EducatedTransformer[Vector, Vector] {

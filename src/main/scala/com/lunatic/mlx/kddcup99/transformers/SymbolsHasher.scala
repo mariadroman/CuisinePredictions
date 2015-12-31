@@ -3,8 +3,9 @@ package com.lunatic.mlx.kddcup99.transformers
 import org.apache.spark.rdd.RDD
 
 /**
-  * Given a list of symbolic columns (usually non-numeric) map it into a list of doubles and save the map
+  * Given a list of symbolic columns (usually non-numeric) map it into a list of doubles and save the map.
   *
+  * Ideally this should be an isomorphic transformer (@see IsoTransformer).
   */
 case class SymbolsHasher(symboliColumns: List[Int], dictionary: Option[Map[Int, Map[String, Int]]])
   extends EducatedTransformer[Array[String], Array[Double]] {

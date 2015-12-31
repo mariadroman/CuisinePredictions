@@ -17,10 +17,6 @@ case class InputAnalyzer[T: ClassTag](records: Option[Long] = None, colNames: Op
       map(col => input.map(v => v(col)).countByValue.toMap).
       zipWithIndex.map(_.swap).toMap
 
-//    val countByColumn: Map[Int, Long] = colIndex.
-//      map(col => input.map(v => v(col)).count).
-//      zipWithIndex.map(_.swap).toMap
-
     val finalColNames = colNames.getOrElse{
       colIndex.map(c => (c, f"*- $c%03d -*")).toMap
     }
@@ -77,7 +73,7 @@ case class InputAnalyzer[T: ClassTag](records: Option[Long] = None, colNames: Op
     }
 
     val legendStr = "" ::
-      (f"| Occurances ||") ::
+      (f"| Occurrences ||") ::
       (f"| ---------- | -------------------------------- |") ::
       (f"| ${(1-eps0)*100}%10.6f | If a column value appears more often the column should probably be ignored |") ::
       (f"| ${(1-eps1)*100}%10.6f | If a column value appears more often the column might probably be ignored  |") ::

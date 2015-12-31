@@ -17,7 +17,7 @@ case class KddTransformer(symboliColumns: List[Int], normAlgo: String = DataNorm
                           vectorizer: Option[Vectorizer] = None,
                           customNormalizer: Option[DataNormalizer] = None,
                           l1Normalizer: Option[DataNormalizer] = None)
-  extends EducatedTransformer[Array[String], Vector]{
+  extends EducatedTransformer[Array[String], Vector] {
 
   override def transform(input: RDD[Array[String]]): RDD[Vector] = {
     require(colRemover.isDefined)
@@ -25,6 +25,17 @@ case class KddTransformer(symboliColumns: List[Int], normAlgo: String = DataNorm
     require(vectorizer.isDefined)
     require(customNormalizer.isDefined)
     require(l1Normalizer.isDefined)
+
+    // TODO make this work (smarter generic types???)
+    //    val tx: List[Transformer[_, _]] =
+    //      List[Option[Transformer[_, _]]](
+    //        colRemover,
+    //        hasher,
+    //        vectorizer,
+    //        customNormalizer,
+    //        l1Normalizer).flatten
+    //    tx.foldLeft(vd)((rdd, trans) => trans.transform(rdd))
+
 
     input.map(compoTrans)
   }
@@ -41,9 +52,19 @@ case class KddTransformer(symboliColumns: List[Int], normAlgo: String = DataNorm
 
   private def compoTrans(input: Array[String]): Vector = {
 
-    // TODO make this work (smarter generic types???)
-    // val tx: List[Transformer[_, _]] = List[Option[Transformer[_, _]]](colRemover, hasher, vectorizer, dataNorm).flatten
-    // tx.foldLeft(input)((rdd, trans) => trans.transform(rdd))
+    val vd = vectorizer.get.transform(
+      colRemover.get.transform(
+        hasher.get.transform(input)))
+
+    // TODO make this work (smarter generic types??? higher-kind types???)
+    //        val tx: List[Transformer[_, _]] =
+    //          List[Option[Transformer[_, _]]](
+    //            colRemover,
+    //            hasher,
+    //            vectorizer,
+    //            customNormalizer,
+    //            l1Normalizer).flatten
+    //    tx.foldLeft(vd)((rdd, trans) => trans.transform(rdd))
 
     l1Normalizer.get.transform(
       customNormalizer.get.transform(

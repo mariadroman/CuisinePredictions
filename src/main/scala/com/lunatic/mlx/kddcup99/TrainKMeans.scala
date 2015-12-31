@@ -141,9 +141,9 @@ object TrainKMeans extends SparkRunnable {
       (rs._1 * rs._4, rs._2 * rs._4, rs._3 * rs._4)
     }.reduce((x1, x2) => (x1._1 + x2._1, x1._2 + x2._2, x1._3 + x2._3))
 
-    val radiusStatsAvgs = (radiusStatsSums._1 / dataSize, radiusStatsSums._2 / dataSize, radiusStatsSums._3 / dataSize)
+    val distanceStatsAvgs = (radiusStatsSums._1 / dataSize, radiusStatsSums._2 / dataSize, radiusStatsSums._3 / dataSize)
 
-    val averageClusterRadius = predictions.map {
+    val averageClusterDistance = predictions.map {
       case (label, cluster, vector) =>
         Vectors.sqdist(vector, clusters(cluster))
     }.mean
@@ -268,10 +268,10 @@ object TrainKMeans extends SparkRunnable {
       f"| WSSSE                | $WSSSE%.7E |" ::
       f"| Entropy Score        | $entropyScore%13.11f |" ::
       f"| Purity  Score        | $purityScore%13.11f |" ::
-      f"| Average Radius       | $averageClusterRadius%13.11f |" ::
-      f"| Avg. Min. Radius     | ${radiusStatsAvgs._1}%13.11f |" ::
-      f"| Avg. Avg. Radius     | ${radiusStatsAvgs._3}%13.11f |" ::
-      f"| Avg. Max. Radius     | ${radiusStatsAvgs._2}%13.11f |" ::
+      f"| Average Distance     | $averageClusterDistance%13.11f |" ::
+      f"| Avg. Min. Distance   | ${distanceStatsAvgs._1}%13.11f |" ::
+      f"| Avg. Avg. Distance   | ${distanceStatsAvgs._3}%13.11f |" ::
+      f"| Avg. Max. Distance   | ${distanceStatsAvgs._2}%13.11f |" ::
       f"| Training Runtime     | ${trainingRuntime_ms / 1000 / 60}%02d:${trainingRuntime_ms / 1000 % 60}%02d (mm:ss) |" ::
       f"| Prediction Runtime   | ${predictionRuntime / 1000 / 60}%02d:${predictionRuntime / 1000 % 60}%02d (mm:ss) |" ::
       Nil
