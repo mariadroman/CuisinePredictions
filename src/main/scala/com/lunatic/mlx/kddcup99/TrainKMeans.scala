@@ -1,7 +1,7 @@
 package com.lunatic.mlx.kddcup99
 
 import com.lunatic.mlx.kddcup99.transformers.{InputAnalyzer, DataNormalizer}
-import com.lunatic.mlx.{removeHdfsFile, timeCode}
+import com.lunatic.mlx.{removeHdfsFile, timeCode, coolMyCPU}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{KMeansModel, KMeans}
 import org.apache.spark.mllib.linalg.{Vectors, Vector}
@@ -219,8 +219,9 @@ object TrainKMeans extends SparkRunnable {
             f"$rez%7d"
           else "       "
         }.mkString(" | ")
+      val totalCount = count.map(_._2).sum
 
-      f"| $clust%5d | $countByLabel |"
+      f"| $clust%5d | $countByLabel | $totalCount%7d |"
     }
 
     val tabPercentageByClustTitle = "" :: "" ::

@@ -2,7 +2,9 @@
 
 ## Usage notes
 
-Some information about the currently generated models can be found [here](kddcup_data_analysis_notes.md).
+Some information about the currently generated models can be found for each experiments session as follows:
+- [Session 01](kddcup_data_analysis_notes_s1.md)
+- [Session 02](kddcup_data_analysis_notes_s2.md).
 
 ## Running on Yarn cluster
 
