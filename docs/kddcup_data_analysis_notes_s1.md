@@ -1,7 +1,4 @@
-# KDD Cup 99
-
-
-## Data analysis notes
+## KDD Cup 99 - Data analysis notes - Session 01
 
 **Parameters:**
 
@@ -50,9 +47,9 @@
 
 Corresponding graphs:
 
-<div align="center"><img src="kddcup99/L0Norm-WSSSE.png"/></div>
-<div align="center"><img src="kddcup99/L1Norm-WSSSE.png"/></div>
-<div align="center"><img src="kddcup99/L2Norm-WSSSE.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L0Norm-WSSSE.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L1Norm-WSSSE.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L2Norm-WSSSE.png"/></div>
 
 
 
@@ -64,7 +61,7 @@ Corresponding graphs:
 - We need an extra measurement of model performance, like [entropy](https://en.wikipedia.org/wiki/Boltzmann%27s_entropy_formula)
 
 
-### Average Cluster Radius Summary
+### Average Cluster Distance Summary
 
 | K   | 0 Norm      | 1 Norm    | 2 Norm V1 | 2 Norm V2 |
 | --: | ----------: | --------: | --------: | --------: |
@@ -90,15 +87,15 @@ Corresponding graphs:
 
 Corresponding graphs:
 
-<div align="center"><img src="kddcup99/L0Norm-AvgRad.png"/></div>
-<div align="center"><img src="kddcup99/L1Norm-AvgRad.png"/></div>
-<div align="center"><img src="kddcup99/L2Norm-AvgRad.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L0Norm-AvgRad.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L1Norm-AvgRad.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L2Norm-AvgRad.png"/></div>
 
 ***Conclusions:*** 
 
-- It appears that WSSSE variation becomes relatively small around K = 100 for 0 Norm
-- It appears that WSSSE variation becomes relatively small around K = 190 for 1 Norm
-- It appears that WSSSE variation becomes relatively small around K = 150 for 2 Norm
+- It appears that average distance variation becomes relatively small around K = 100 for 0 Norm
+- It appears that average distance variation becomes relatively small around K = 190 for 1 Norm
+- It appears that average distance variation becomes relatively small around K = 150 for 2 Norm
 
 
 ### Entropy Measurements Summary
@@ -127,13 +124,13 @@ Corresponding graphs:
 
 Corresponding graphs:
 
-<div align="center"><img src="kddcup99/L0Norm-Entropy.png"/></div>
-<div align="center"><img src="kddcup99/LxNorm-Entropy.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L0Norm-Entropy.png"/></div>
+<div align="center"><img src="kddcup99/session_01/LxNorm-Entropy.png"/></div>
 
 ***Conclusions:***
 
 - 0 Norm has a very high entropy compared to 1 or 2 Norms
-- It seems that for bot 1 and 2 Norms K = 150 is reasonably small
+- It seems that for both 1 and 2 Norms K = 150 is reasonably small
 
 
 ### Training Runtime Measurements Summary
@@ -162,7 +159,7 @@ Corresponding graphs:
 
 Corresponding graphs:
 
-<div align="center"><img src="kddcup99/L_Norm-TRT.png"/></div>
+<div align="center"><img src="kddcup99/session_01/L_Norm-TRT.png"/></div>
 
 Time was measured in minutes:seconds.
 
@@ -185,25 +182,25 @@ Time was measured in minutes:seconds.
 
 | K   | L0Norm                                              | L1Norm                                              | L2NormV1                                              | L2NormV2                                              |
 | --: | :-------------------------------------------------: | :-------------------------------------------------: | :---------------------------------------------------: | :---------------------------------------------------: |
-|  20 | [data](kddcup99/kmeans_1E-15_020_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_020_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_020_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_020_0100_03_L2NormV2.md) |
-|  30 | [data](kddcup99/kmeans_1E-15_030_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_030_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_030_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_030_0100_03_L2NormV2.md) |
-|  40 | [data](kddcup99/kmeans_1E-15_040_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_040_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_040_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_040_0100_03_L2NormV2.md) |
-|  50 | [data](kddcup99/kmeans_1E-15_050_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_050_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_050_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_050_0100_03_L2NormV2.md) |
-|  60 | [data](kddcup99/kmeans_1E-15_060_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_060_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_060_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_060_0100_03_L2NormV2.md) |
-|  70 | [data](kddcup99/kmeans_1E-15_070_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_070_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_070_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_070_0100_03_L2NormV2.md) |
-|  80 | [data](kddcup99/kmeans_1E-15_080_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_080_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_080_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_080_0100_03_L2NormV2.md) |
-|  90 | [data](kddcup99/kmeans_1E-15_090_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_090_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_090_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_090_0100_03_L2NormV2.md) |
-| 100 | [data](kddcup99/kmeans_1E-15_100_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_100_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_100_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_100_0100_03_L2NormV2.md) |
-| 110 | [data](kddcup99/kmeans_1E-15_110_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_110_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_110_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_110_0100_03_L2NormV2.md) |
-| 120 | [data](kddcup99/kmeans_1E-15_120_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_120_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_120_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_120_0100_03_L2NormV2.md) |
-| 130 | [data](kddcup99/kmeans_1E-15_130_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_130_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_130_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_130_0100_03_L2NormV2.md) |
-| 140 | [data](kddcup99/kmeans_1E-15_140_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_140_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_140_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_140_0100_03_L2NormV2.md) |
-| 150 | [data](kddcup99/kmeans_1E-15_150_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_150_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_150_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_150_0100_03_L2NormV2.md) |
-| 160 | [data](kddcup99/kmeans_1E-15_160_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_160_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_160_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_160_0100_03_L2NormV2.md) |
-| 170 | [data](kddcup99/kmeans_1E-15_170_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_170_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_170_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_170_0100_03_L2NormV2.md) |
-| 180 | [data](kddcup99/kmeans_1E-15_180_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_180_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_180_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_180_0100_03_L2NormV2.md) |
-| 190 | [data](kddcup99/kmeans_1E-15_190_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_190_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_190_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_190_0100_03_L2NormV2.md) |
-| 200 | [data](kddcup99/kmeans_1E-15_200_0100_03_L0Norm.md) | [data](kddcup99/kmeans_1E-15_200_0100_03_L1Norm.md) | [data](kddcup99/kmeans_1E-15_200_0100_03_L2NormV1.md) | [data](kddcup99/kmeans_1E-15_200_0100_03_L2NormV2.md) |
+|  20 | [data](kddcup99/session_01/kmeans_1E-15_020_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_020_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_020_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_020_0100_03_L2NormV2.md) |
+|  30 | [data](kddcup99/session_01/kmeans_1E-15_030_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_030_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_030_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_030_0100_03_L2NormV2.md) |
+|  40 | [data](kddcup99/session_01/kmeans_1E-15_040_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_040_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_040_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_040_0100_03_L2NormV2.md) |
+|  50 | [data](kddcup99/session_01/kmeans_1E-15_050_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_050_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_050_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_050_0100_03_L2NormV2.md) |
+|  60 | [data](kddcup99/session_01/kmeans_1E-15_060_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_060_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_060_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_060_0100_03_L2NormV2.md) |
+|  70 | [data](kddcup99/session_01/kmeans_1E-15_070_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_070_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_070_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_070_0100_03_L2NormV2.md) |
+|  80 | [data](kddcup99/session_01/kmeans_1E-15_080_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_080_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_080_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_080_0100_03_L2NormV2.md) |
+|  90 | [data](kddcup99/session_01/kmeans_1E-15_090_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_090_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_090_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_090_0100_03_L2NormV2.md) |
+| 100 | [data](kddcup99/session_01/kmeans_1E-15_100_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_100_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_100_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_100_0100_03_L2NormV2.md) |
+| 110 | [data](kddcup99/session_01/kmeans_1E-15_110_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_110_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_110_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_110_0100_03_L2NormV2.md) |
+| 120 | [data](kddcup99/session_01/kmeans_1E-15_120_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_120_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_120_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_120_0100_03_L2NormV2.md) |
+| 130 | [data](kddcup99/session_01/kmeans_1E-15_130_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_130_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_130_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_130_0100_03_L2NormV2.md) |
+| 140 | [data](kddcup99/session_01/kmeans_1E-15_140_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_140_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_140_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_140_0100_03_L2NormV2.md) |
+| 150 | [data](kddcup99/session_01/kmeans_1E-15_150_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_150_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_150_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_150_0100_03_L2NormV2.md) |
+| 160 | [data](kddcup99/session_01/kmeans_1E-15_160_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_160_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_160_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_160_0100_03_L2NormV2.md) |
+| 170 | [data](kddcup99/session_01/kmeans_1E-15_170_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_170_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_170_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_170_0100_03_L2NormV2.md) |
+| 180 | [data](kddcup99/session_01/kmeans_1E-15_180_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_180_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_180_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_180_0100_03_L2NormV2.md) |
+| 190 | [data](kddcup99/session_01/kmeans_1E-15_190_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_190_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_190_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_190_0100_03_L2NormV2.md) |
+| 200 | [data](kddcup99/session_01/kmeans_1E-15_200_0100_03_L0Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_200_0100_03_L1Norm.md) | [data](kddcup99/session_01/kmeans_1E-15_200_0100_03_L2NormV1.md) | [data](kddcup99/session_01/kmeans_1E-15_200_0100_03_L2NormV2.md) |
 
 
 [Back](kddcup.md)

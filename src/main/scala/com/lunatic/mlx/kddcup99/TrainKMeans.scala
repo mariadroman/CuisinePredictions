@@ -1,10 +1,10 @@
 package com.lunatic.mlx.kddcup99
 
-import com.lunatic.mlx.kddcup99.transformers.{DataNormalizer, InputAnalyzer}
-import com.lunatic.mlx.{removeHdfsFile, timeCode}
+import com.lunatic.mlx.kddcup99.transformers.{InputAnalyzer, DataNormalizer}
+import com.lunatic.mlx.{removeHdfsFile, timeCode, coolMyCPU}
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.clustering.{KMeans, KMeansModel}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.mllib.clustering.{KMeansModel, KMeans}
+import org.apache.spark.mllib.linalg.{Vectors, Vector}
 import org.apache.spark.rdd.RDD
 
 /**
