@@ -1,6 +1,6 @@
 package com.lunatic.mlx.kddcup99
 
-import com.lunatic.mlx.kddcup99.transformers.{InputAnalyzer, DataNormalizer}
+import com.lunatic.mlx.kddcup99.transformers.{ColumnRemover, DataNormalizer, InputAnalyzer}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.KMeansModel
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
@@ -67,7 +67,6 @@ object PredictKMeans extends SparkRunnable {
     //TODO Ugly!!! Redo!
     val labelsCount = analyser.distinctCountByColumn.get.get(41).get
 
-
     // The following parameters are only used to find the corresponding model
     val maxIterations = 100
     val runs = 3
@@ -128,6 +127,7 @@ object PredictKMeans extends SparkRunnable {
     val files = Seq((appConf.testDataPath, "test"))
 
     for (
+
       norm <- norms;
       transformer = loadObjectFromFile[KddTransformer](appConf.transformerModelPath(norm)).get;
       k <- ks;
@@ -135,6 +135,7 @@ object PredictKMeans extends SparkRunnable {
       modelFile = stubFilePath(params) + ".model";
       model = KMeansModel.load(sc, modelFile);
       file <- files
+
     ) yield {
 
       val labeledData = sc.objectFile[Array[String]](file._1);
@@ -150,7 +151,11 @@ object PredictKMeans extends SparkRunnable {
 
       val clusters = model.clusterCenters.zipWithIndex.map(_.swap).toMap
       val centers = clusters.map(cc => cc._1 + "," + cc._2.toArray.mkString(",")).toSeq
-      saveLinesToFile(centers ++ sample, sampleFile)
+
+      val cr = ColumnRemover[String](transformer.colRemover.get.removableColumns)
+      val colNames = "Cluster," + cr.transform(analyser.colNames.get.toSeq.sortBy(_._1).map(_._2).toArray).mkString(", ")
+
+      saveLinesToFile((centers) ++ sample, sampleFile)
 
     }
 

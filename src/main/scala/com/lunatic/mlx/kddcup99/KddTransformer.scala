@@ -57,14 +57,14 @@ case class KddTransformer(symboliColumns: List[Int], normAlgo: String = DataNorm
         hasher.get.transform(input)))
 
     // TODO make this work (smarter generic types??? higher-kind types???)
-    //        val tx: List[Transformer[_, _]] =
-    //          List[Option[Transformer[_, _]]](
-    //            colRemover,
-    //            hasher,
-    //            vectorizer,
-    //            customNormalizer,
-    //            l1Normalizer).flatten
-    //    tx.foldLeft(vd)((rdd, trans) => trans.transform(rdd))
+    //            val tx: List[Function1[Any, Any]] =
+    //              List[Option[Function1[Any, Any]]](
+    //                colRemover,
+    //                hasher,
+    //                vectorizer,
+    //                customNormalizer,
+    //                l1Normalizer).flatten
+    //    Function.chain(tx)(input)
 
     l1Normalizer.get.transform(
       customNormalizer.get.transform(

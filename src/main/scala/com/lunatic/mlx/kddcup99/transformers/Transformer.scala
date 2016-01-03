@@ -3,13 +3,13 @@ package com.lunatic.mlx.kddcup99.transformers
 import org.apache.spark.rdd.RDD
 
 /**
-  * Transform a T into an R or an RDD[T] into an RDD[R]
+  * Transform a A into an B or an RDD[A] into an RDD[B]
   */
-trait Transformer[T, R] {
+trait Transformer[A, B] {
 
-  def transform(input: RDD[T]): RDD[R]
+  def transform(input: RDD[A]): RDD[B]
 
-  def transform(input: T): R
+  def transform(input: A): B
 
 }
 
