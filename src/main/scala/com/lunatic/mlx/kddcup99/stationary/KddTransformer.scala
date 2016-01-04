@@ -1,8 +1,8 @@
-package com.lunatic.mlx.kddcup99
+package com.lunatic.mlx.kddcup99.stationary
 
 import com.lunatic.mlx.kddcup99.transformers._
-import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 

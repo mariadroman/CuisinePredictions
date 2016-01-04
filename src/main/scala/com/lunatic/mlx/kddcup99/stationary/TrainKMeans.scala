@@ -1,10 +1,11 @@
-package com.lunatic.mlx.kddcup99
+package com.lunatic.mlx.kddcup99.stationary
 
-import com.lunatic.mlx.kddcup99.transformers.{InputAnalyzer, DataNormalizer}
-import com.lunatic.mlx.{removeHdfsFile, timeCode, coolMyCPU}
+import com.lunatic.mlx.kddcup99._
+import com.lunatic.mlx.kddcup99.transformers.{DataNormalizer, InputAnalyzer}
+import com.lunatic.mlx.{removeHdfsFile, timeCode}
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.clustering.{KMeansModel, KMeans}
-import org.apache.spark.mllib.linalg.{Vectors, Vector}
+import org.apache.spark.mllib.clustering.{KMeans, KMeansModel}
+import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.rdd.RDD
 
 /**
@@ -243,7 +244,7 @@ object TrainKMeans extends SparkRunnable {
     val tabClustInfoHeader = "" :: "" ::
       "### Clusters Info" ::
       "" ::
-      f"| Clust | ${"Labels"}%-10s | ${"Min. Radius"}%-12s | ${"Avg. Radius"}%-12s | ${"Max. Radius"}%-12s | " ::
+      f"| Clust | ${"Labels"}%-10s | ${"Min. Dist."}%-12s | ${"Avg. Dist."}%-12s | ${"Max. Dist."}%-12s | " ::
       f"| ----: | ---------: | -----------: | -----------: | -----------: | " ::
      Nil
 
@@ -252,10 +253,10 @@ object TrainKMeans extends SparkRunnable {
         val count = labelCountByCluster.get(clust)
         if(count.isDefined) {
           val totalCount = count.get.map(_._2).sum
-          val minRad = radiusStatsPerCluster(clust)._1
-          val maxRad = radiusStatsPerCluster(clust)._2
-          val avgRad = radiusStatsPerCluster(clust)._3
-          f"| $clust%5d | $totalCount%10d | $minRad%12.4f | $avgRad%12.4f | $maxRad%12.4f | "
+          val minDist = radiusStatsPerCluster(clust)._1
+          val maxDist = radiusStatsPerCluster(clust)._2
+          val avgDist = radiusStatsPerCluster(clust)._3
+          f"| $clust%5d | $totalCount%10d | $minDist%12.4f | $avgDist%12.4f | $maxDist%12.4f | "
         } else {
           f"| $clust%5d | ${" "}%10s | ${" "}%12s | ${" "}%12s | ${" "}%12s | "
       }

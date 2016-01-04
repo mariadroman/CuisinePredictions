@@ -1,5 +1,6 @@
-package com.lunatic.mlx.kddcup99
+package com.lunatic.mlx.kddcup99.stationary
 
+import com.lunatic.mlx.kddcup99._
 import com.lunatic.mlx.kddcup99.transformers._
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD

@@ -1,5 +1,6 @@
-package com.lunatic.mlx.kddcup99
+package com.lunatic.mlx.kddcup99.stationary
 
+import com.lunatic.mlx.kddcup99.Configuration
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
